@@ -4,7 +4,6 @@ project(slstatus C)
 set(CMAKE_C_STANDARD 11)
 
 find_package(X11 REQUIRED)
-find_package(Boost COMPONENTS program_options REQUIRED)
 
 link_libraries(${X11_LIBRARIES})
 
