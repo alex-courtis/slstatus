@@ -66,6 +66,5 @@ static const struct arg args[] = {
 	{ cpu_perc,     "   C %s%%",       NULL },
 	{ ram_perc,     "   M %s%%",       NULL },
 	{ swap_perc,    "/%s%%",           NULL },
-	{ run_command,  "   Vo %s",        "pulseaudio-ctl full-status | sed -E 's/^[0-9]+ yes/Off/; s/^([0-9]+) no/\\1%/; s/ yes$//; s/ no$/ Vi On/'" },
 	{ datetime,     "   %s ",          "%a %d %b %Y %H:%M:%S" },
 };
