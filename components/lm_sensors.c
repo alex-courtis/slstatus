@@ -13,9 +13,9 @@
 enum Chip { k10Temp, amdgpu };
 
 typedef struct {
-	int amdgpuTemp;
-	int amdgpuPower;
-	int k10tempTdie;
+	int amdgpuTempMax;
+	int amdgpuPowerTotal;
+	int k10tempTdieMax;
 } Sts;
 
 // discover and collect interesting sensor stats
@@ -31,9 +31,9 @@ Sts collect() {
 	double value;
 	enum Chip chip;
 	Sts sts = {
-			.amdgpuPower = -1,
-			.amdgpuTemp = -1,
-			.k10tempTdie = -1,
+			.amdgpuPowerTotal = 0,
+			.amdgpuTempMax = 0,
+			.k10tempTdieMax = 0,
 	};
 
 	// init; clean up is done at end
@@ -68,11 +68,11 @@ Sts collect() {
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
 								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.amdgpuTemp = MAX(sts.amdgpuTemp, (int) (value + 0.5));
+								sts.amdgpuTempMax = MAX(sts.amdgpuTempMax, (int) (value + 0.5));
 								break;
 							case SENSORS_SUBFEATURE_POWER_AVERAGE:
 								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.amdgpuPower = MAX(sts.amdgpuPower, (int) (value + 0.5));
+								sts.amdgpuPowerTotal += (int) (value + 0.5);
 								break;
 							default:
 								break;
@@ -83,7 +83,7 @@ Sts collect() {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
 								if (strcmp(label, LABEL_TDIE) == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
-									sts.k10tempTdie = MAX(sts.k10tempTdie, (int)(value + 0.5));
+									sts.k10tempTdieMax = MAX(sts.k10tempTdieMax, (int)(value + 0.5));
 								}
 								break;
 							default:
@@ -108,9 +108,9 @@ const char *render(const Sts sts) {
 
 	char *bufPtr = buf;
 
-	bufPtr += sprintf(bufPtr, "amdgpu %i°C %iW", sts.amdgpuTemp, sts.amdgpuPower);
+	bufPtr += sprintf(bufPtr, "amdgpu %i°C %iW", sts.amdgpuTempMax, sts.amdgpuPowerTotal);
 
-	sprintf(bufPtr, "%s%s %i°C", bufPtr == buf ? "" : "   ", LABEL_TDIE, sts.k10tempTdie);
+	sprintf(bufPtr, "%s%s %i°C", bufPtr == buf ? "" : "   ", LABEL_TDIE, sts.k10tempTdieMax);
 
 	return buf;
 }
