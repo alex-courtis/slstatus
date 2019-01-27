@@ -1,15 +1,19 @@
 cmake_minimum_required(VERSION 3.13)
 project(slstatus C)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_FLAGS "-std=c99 -pedantic -Wall -Wextra -Os")
 
-find_package(X11 REQUIRED)
-
-link_libraries(${X11_LIBRARIES})
-
-include_directories(.)
+add_compile_definitions(
+        _DEFAULT_SOURCE)
 
 add_executable(slstatus
+        slstatus.c
+        slstatus.h
+        arg.h
+        config.h
+        config.mk
+        util.c
+        util.h
         components/battery.c
         components/cpu.c
         components/datetime.c
@@ -30,10 +34,7 @@ add_executable(slstatus
         components/uptime.c
         components/user.c
         components/volume.c
-        components/wifi.c
-        arg.h
-        config.h
-        slstatus.c
-        slstatus.h
-        util.c
-        util.h)
+        components/wifi.c)
+
+target_link_libraries(slstatus
+        X11)
