@@ -18,7 +18,7 @@ typedef struct {
 	int k10tempTdieMax;
 } Sts;
 
-// discover and collect interesting sensor stats
+/* discover and collect interesting sensor stats */
 Sts collect() {
 
 	const sensors_chip_name *chip_name;
@@ -36,14 +36,14 @@ Sts collect() {
 			.k10tempTdieMax = 0,
 	};
 
-	// init; clean up is done at end
+	/* init; clean up is done at end */
 	sensors_init(NULL);
 
-	// iterate chips
+	/* iterate chips */
 	chip_nr = 0;
 	while ((chip_name = sensors_get_detected_chips(NULL, &chip_nr))) {
 
-		// only interested in known chips
+		/* only interested in known chips */
 		if (strcmp(chip_name->prefix, PREFIX_AMDGPU) == 0)
 			chip = amdgpu;
 		else if (strcmp(chip_name->prefix, PREFIX_K10_TEMP) == 0)
@@ -51,13 +51,13 @@ Sts collect() {
 		else
 			continue;
 
-		// iterate features
+		/* iterate features */
 		feature_nr = 0;
 		while ((feature = sensors_get_features(chip_name, &feature_nr))) {
 			if ((label = sensors_get_label(chip_name, feature)) == NULL)
 				continue;
 
-			// iterate readable sub-features
+			/* iterate readable sub-features */
 			subfeature_nr = 0;
 			while ((subfeature = sensors_get_all_subfeatures(chip_name, feature, &subfeature_nr))) {
 				if (!(subfeature->flags & SENSORS_MODE_R))
@@ -95,28 +95,28 @@ Sts collect() {
 		}
 	}
 
-	// promises not to error
+	/* promises not to error */
 	sensors_cleanup();
 
 	return sts;
 }
 
-// render average stats as a string with a trailing newline
-// static buffer is returned, do not free
+/* render average stats as a string with a trailing newline */
+/* static buffer is returned, do not free */
 const char *render(const Sts sts) {
-	static char buf[128]; // ensure that this is large enough for all the sprintfs with maxints
+	static char buf[128];
 
-	char *bufPtr = buf;
+	char *pbuf = buf;
 
-	bufPtr += sprintf(bufPtr, "amdgpu %i°C %iW", sts.amdgpuTempMax, sts.amdgpuPowerTotal);
+	pbuf += sprintf(pbuf, "amdgpu %i°C %iW", sts.amdgpuTempMax, sts.amdgpuPowerTotal);
 
-	sprintf(bufPtr, "%s%s %i°C", bufPtr == buf ? "" : "   ", LABEL_TDIE, sts.k10tempTdieMax);
+	sprintf(pbuf, "%s%s %i°C", pbuf == buf ? "" : "   ", LABEL_TDIE, sts.k10tempTdieMax);
 
 	return buf;
 }
 
 const char *
-lm_sensors(void)
+lm_sensors()
 {
 	return render(collect());
 }
