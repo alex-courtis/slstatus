@@ -118,5 +118,14 @@ const char *render(const Sts sts) {
 const char *
 lm_sensors()
 {
-	return render(collect());
+    static int invocation = 0;
+	static const char *output;
+
+	if (invocation == 0)
+		output = render(collect());
+
+	if (++invocation >= 5)
+		invocation = 0;
+
+	return output;
 }
