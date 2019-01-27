@@ -34,7 +34,9 @@ add_executable(slstatus
         components/uptime.c
         components/user.c
         components/volume.c
-        components/wifi.c)
+        components/wifi.c
+        components/lm_sensors.c)
 
 target_link_libraries(slstatus
-        X11)
+        X11
+        sensors)
