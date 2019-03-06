@@ -115,6 +115,23 @@
 
 		return "";
 	}
+
+	/* empty unless discharging, then shows percentage and remaining */
+	const char *
+	battery_alex(const char *bat)
+	{
+		static char b[1024];
+		if (!strcmp(battery_state(bat), "-")) {
+			char *pb = b;
+			pb += sprintf(pb, "   B %s%%", battery_perc(bat));
+			const char *remaining = battery_remaining(bat);
+			if (remaining)
+				sprintf(pb, "(%s)", battery_remaining(bat));
+			return b;
+		} else {
+			return "";
+		}
+	}
 #elif defined(__OpenBSD__)
 	#include <fcntl.h>
 	#include <machine/apmvar.h>
