@@ -61,7 +61,14 @@ static const char unknown_str[] = "n/a";
  * lm_sensors          lm_sensors data aggregation     NULL
  */
 static const struct arg args[] = {
-	/* function format          argument */
+#if defined(HOST_duke)
+	{ netspeed_rx,  "wlp4s0 %sB/s",    "wlp4s0" },
+	{ load_avg,     "   L %s",         NULL },
+	{ ram_perc,     "   M %s%%",       NULL },
+	{ swap_perc,    "/%s%%",           NULL },
+	{ battery_alex, "%s",              "BAT0" },
+	{ datetime,     "   %s",           "%a %d %b %Y %H:%M:%S" },
+#elif defined(HOST_emperor)
 	{ netspeed_rx,  "enp3s0 %sB/s",    "enp3s0" },
 	{ lm_sensors,   "   %s",           NULL },
 	{ load_avg,     "   L %s",         NULL },
@@ -69,4 +76,11 @@ static const struct arg args[] = {
 	{ ram_perc,     "   M %s%%",       NULL },
 	{ swap_perc,    "/%s%%",           NULL },
 	{ datetime,     "   %s",           "%a %d %b %Y %H:%M:%S" },
+#else
+	{ load_avg,     "   L %s",         NULL },
+	{ cpu_perc,     "   C %s%%",       NULL },
+	{ ram_perc,     "   M %s%%",       NULL },
+	{ swap_perc,    "/%s%%",           NULL },
+	{ datetime,     "   %s",           "%a %d %b %Y %H:%M:%S" },
+#endif
 };

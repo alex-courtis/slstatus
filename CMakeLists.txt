@@ -3,8 +3,12 @@ project(slstatus C)
 
 set(CMAKE_C_FLAGS "-std=c99 -pedantic -Wall -Wextra -Os")
 
+cmake_host_system_information(RESULT HOSTNAME QUERY HOSTNAME)
+
 add_compile_definitions(
-        _DEFAULT_SOURCE)
+        _DEFAULT_SOURCE
+        HOST_${HOSTNAME}
+)
 
 add_executable(slstatus
         slstatus.c
