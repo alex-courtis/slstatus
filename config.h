@@ -70,6 +70,6 @@ static const struct arg args[] = {
 	{ lm_sensors,   "   %s",           NULL },
 	{ load_avg,     "   %s",           NULL },
 	{ ram_perc,     "   %s%%",         NULL },
-	{ swap_perc,    "/%s%%",           NULL },
+	{ swap_perc,    " %s%%",           NULL },
 	{ datetime,     "   %s",           "%a %d %b %Y %H:%M:%S" },
 };

@@ -139,7 +139,7 @@ const char *render(const Sts sts) {
 		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.acpitzTempMax);
 
 	if (sts.thinkpadFan)
-		pbuf += sprintf(pbuf, "%s%i RPM", pbuf == buf ? "" : " ", sts.thinkpadFan);
+		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.thinkpadFan);
 
 	if (sts.amdgpuTempMax)
 		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.amdgpuTempMax);
