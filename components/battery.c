@@ -123,10 +123,11 @@
 		static char b[1024];
 		if (!strcmp(battery_state(bat), "-")) {
 			char *pb = b;
-			pb += sprintf(pb, "   B %s%%", battery_perc(bat));
+			pb += sprintf(pb, "%s%%", battery_perc(bat));
 			const char *remaining = battery_remaining(bat);
 			if (remaining)
-				sprintf(pb, "(%s)", battery_remaining(bat));
+				pb += sprintf(pb, "(%s)", battery_remaining(bat));
+			pb += sprintf(pb, "%s", "   ");
 			return b;
 		} else {
 			return "";
