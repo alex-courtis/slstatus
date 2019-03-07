@@ -136,16 +136,16 @@ const char *render(const Sts sts) {
 		pbuf += sprintf(pbuf, "%i°C", sts.k10tempTdieMax);
 
 	if (sts.acpitzTempMax)
-		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "/", sts.acpitzTempMax);
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.acpitzTempMax);
 
 	if (sts.thinkpadFan)
-		pbuf += sprintf(pbuf, "%s%iRPM", pbuf == buf ? "" : "/", sts.thinkpadFan);
+		pbuf += sprintf(pbuf, "%s%i RPM", pbuf == buf ? "" : " ", sts.thinkpadFan);
 
 	if (sts.amdgpuTempMax)
-		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "/", sts.amdgpuTempMax);
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.amdgpuTempMax);
 
 	if (sts.amdgpuPowerTotal)
-		sprintf(pbuf, "%s%iW", pbuf == buf ? "" : "/", sts.amdgpuPowerTotal);
+		sprintf(pbuf, "%s%iW", pbuf == buf ? "" : " ", sts.amdgpuPowerTotal);
 
 	return buf;
 }
