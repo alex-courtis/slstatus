@@ -6,16 +6,14 @@
 
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
 
-#define PREFIX_K10_TEMP "k10temp"
-#define PREFIX_AMDGPU "amdgpu"
-#define LABEL_TDIE "Tdie"
-
-enum Chip { k10Temp, amdgpu };
+enum Chip { k10Temp, amdgpu, thinkpad, acpitz };
 
 typedef struct {
 	int amdgpuTempMax;
 	int amdgpuPowerTotal;
 	int k10tempTdieMax;
+	int thinkpadFan;
+	int acpitzTempMax;
 } Sts;
 
 /* discover and collect interesting sensor stats */
@@ -34,6 +32,8 @@ Sts collect() {
 			.amdgpuPowerTotal = 0,
 			.amdgpuTempMax = 0,
 			.k10tempTdieMax = 0,
+			.thinkpadFan = 0,
+			.acpitzTempMax = 0,
 	};
 
 	/* init; clean up is done at end */
@@ -44,10 +44,14 @@ Sts collect() {
 	while ((chip_name = sensors_get_detected_chips(NULL, &chip_nr))) {
 
 		/* only interested in known chips */
-		if (strcmp(chip_name->prefix, PREFIX_AMDGPU) == 0)
+		if (strcmp(chip_name->prefix, "amdgpu") == 0)
 			chip = amdgpu;
-		else if (strcmp(chip_name->prefix, PREFIX_K10_TEMP) == 0)
-		    chip = k10Temp;
+		else if (strcmp(chip_name->prefix, "k10temp") == 0)
+			chip = k10Temp;
+		else if (strcmp(chip_name->prefix, "thinkpad") == 0)
+			chip = thinkpad;
+		else if (strcmp(chip_name->prefix, "acpitz") == 0)
+			chip = acpitz;
 		else
 			continue;
 
@@ -64,6 +68,26 @@ Sts collect() {
 					continue;
 
 				switch(chip) {
+					case thinkpad:
+						switch (subfeature->type) {
+							case SENSORS_SUBFEATURE_FAN_INPUT:
+								sensors_get_value(chip_name, subfeature->number, &value);
+								sts.thinkpadFan = (int)(value + 0.5);
+								break;
+							default:
+								break;
+						}
+						break;
+					case acpitz:
+						switch (subfeature->type) {
+							case SENSORS_SUBFEATURE_TEMP_INPUT:
+								sensors_get_value(chip_name, subfeature->number, &value);
+								sts.acpitzTempMax = MAX(sts.acpitzTempMax, (int)(value + 0.5));
+								break;
+							default:
+								break;
+						}
+						break;
 					case amdgpu:
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
@@ -81,7 +105,7 @@ Sts collect() {
 					case k10Temp:
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
-								if (strcmp(label, LABEL_TDIE) == 0) {
+								if (strcmp(label, "Tdie") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.k10tempTdieMax = MAX(sts.k10tempTdieMax, (int)(value + 0.5));
 								}
@@ -108,9 +132,20 @@ const char *render(const Sts sts) {
 
 	char *pbuf = buf;
 
-	pbuf += sprintf(pbuf, "amdgpu %i°C %iW", sts.amdgpuTempMax, sts.amdgpuPowerTotal);
+	if (sts.k10tempTdieMax)
+		pbuf += sprintf(pbuf, "%i°C", sts.k10tempTdieMax);
 
-	sprintf(pbuf, "%s%s %i°C", pbuf == buf ? "" : "   ", LABEL_TDIE, sts.k10tempTdieMax);
+	if (sts.acpitzTempMax)
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "/", sts.acpitzTempMax);
+
+	if (sts.thinkpadFan)
+		pbuf += sprintf(pbuf, "%s%iRPM", pbuf == buf ? "" : "/", sts.thinkpadFan);
+
+	if (sts.amdgpuTempMax)
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "/", sts.amdgpuTempMax);
+
+	if (sts.amdgpuPowerTotal)
+		sprintf(pbuf, "%s%iW", pbuf == buf ? "" : "/", sts.amdgpuPowerTotal);
 
 	return buf;
 }
@@ -118,7 +153,7 @@ const char *render(const Sts sts) {
 const char *
 lm_sensors()
 {
-    static int invocation = 0;
+	static int invocation = 0;
 	static const char *output;
 
 	if (invocation == 0)
