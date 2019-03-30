@@ -62,7 +62,6 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
-	{ battery_alex, "%s",              "BAT0" },
 	{ netspeed_rx,  "%sB/s   ",        "wlp4s0" },
 #elif defined(HOST_emperor)
 	{ netspeed_rx,  "%sB/s   ",        "enp3s0" },
@@ -71,5 +70,8 @@ static const struct arg args[] = {
 	{ load_avg,     "%s   ",           NULL },
 	{ ram_perc,     "%s%% ",           NULL },
 	{ swap_perc,    "%s%%   ",         NULL },
+#if defined(HOST_duke)
+	{ battery_alex, "%s",              "BAT0" },
+#endif
 	{ datetime,     "%s",           "%a %d %b %Y %H:%M:%S" },
 };
