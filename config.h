@@ -73,5 +73,9 @@ static const struct arg args[] = {
 #if defined(HOST_duke)
 	{ battery_alex, "%s",              "BAT0" },
 #endif
+#if defined(HOST_duke)
+	{ datetime,     "%s",           "%H:%M:%S" },
+#else
 	{ datetime,     "%s",           "%a %d %b %Y %H:%M:%S" },
+#endif
 };
