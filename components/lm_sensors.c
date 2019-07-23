@@ -6,14 +6,15 @@
 
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
 
-enum Chip { k10Temp, amdgpu, thinkpad, acpitz };
+enum Chip { k10Temp, amdgpu, thinkpad, coretemp, dell };
 
 typedef struct {
 	int amdgpuTempMax;
 	int amdgpuPowerTotal;
 	int k10tempTdieMax;
 	int thinkpadFan;
-	int acpitzTempMax;
+	int dellFanMax;
+	int coreTempMax;
 } Sts;
 
 /* discover and collect interesting sensor stats */
@@ -33,7 +34,8 @@ Sts collect() {
 			.amdgpuTempMax = 0,
 			.k10tempTdieMax = 0,
 			.thinkpadFan = 0,
-			.acpitzTempMax = 0,
+			.dellFanMax = 0,
+			.coreTempMax = 0,
 	};
 
 	/* init; clean up is done at end */
@@ -50,8 +52,10 @@ Sts collect() {
 			chip = k10Temp;
 		else if (strcmp(chip_name->prefix, "thinkpad") == 0)
 			chip = thinkpad;
-		else if (strcmp(chip_name->prefix, "acpitz") == 0)
-			chip = acpitz;
+		else if (strcmp(chip_name->prefix, "coretemp") == 0)
+			chip = coretemp;
+		else if (strcmp(chip_name->prefix, "dell_smm") == 0)
+			chip = dell;
 		else
 			continue;
 
@@ -73,16 +77,6 @@ Sts collect() {
 							case SENSORS_SUBFEATURE_FAN_INPUT:
 								sensors_get_value(chip_name, subfeature->number, &value);
 								sts.thinkpadFan = (int)(value + 0.5);
-								break;
-							default:
-								break;
-						}
-						break;
-					case acpitz:
-						switch (subfeature->type) {
-							case SENSORS_SUBFEATURE_TEMP_INPUT:
-								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.acpitzTempMax = MAX(sts.acpitzTempMax, (int)(value + 0.5));
 								break;
 							default:
 								break;
@@ -114,6 +108,26 @@ Sts collect() {
 								break;
 						}
 						break;
+					case coretemp:
+						switch (subfeature->type) {
+						case SENSORS_SUBFEATURE_TEMP_INPUT:
+							sensors_get_value(chip_name, subfeature->number, &value);
+							sts.coreTempMax = MAX(sts.coreTempMax, (int)(value + 0.5));
+							break;
+						default:
+							break;
+						}
+						break;
+					case dell:
+						switch (subfeature->type) {
+						case SENSORS_SUBFEATURE_FAN_INPUT:
+							sensors_get_value(chip_name, subfeature->number, &value);
+							sts.dellFanMax = MAX(sts.dellFanMax, (int)(value + 0.5));
+							break;
+						default:
+							break;
+						}
+						break;
 				}
 			}
 		}
@@ -132,14 +146,17 @@ const char *render(const Sts sts) {
 
 	char *pbuf = buf;
 
+	if (sts.coreTempMax)
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.coreTempMax);
+
 	if (sts.k10tempTdieMax)
 		pbuf += sprintf(pbuf, "%i°C", sts.k10tempTdieMax);
 
-	if (sts.acpitzTempMax)
-		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.acpitzTempMax);
-
 	if (sts.thinkpadFan)
 		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.thinkpadFan);
+
+	if (sts.dellFanMax)
+		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.dellFanMax);
 
 	if (sts.amdgpuTempMax)
 		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.amdgpuTempMax);
