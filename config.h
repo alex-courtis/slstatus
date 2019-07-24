@@ -65,6 +65,8 @@ static const struct arg args[] = {
 	{ netspeed_rx,  "%sB/s   ",        "wlp4s0" },
 #elif defined(HOST_emperor)
 	{ netspeed_rx,  "%sB/s   ",        "enp3s0" },
+#elif defined(HOST_gigantor)
+	{ netspeed_rx,  "%sB/s   ",        "wlp59s0" },
 #endif
 	{ lm_sensors,   "%s   ",           NULL },
 	{ load_avg,     "%s   ",           NULL },
