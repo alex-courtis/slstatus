@@ -74,6 +74,8 @@ static const struct arg args[] = {
 	{ swap_perc,    "%s%%   ",         NULL },
 #if defined(HOST_duke)
 	{ battery_alex, "%s",              "BAT0" },
+#elif defined(HOST_gigantor)
+	{ battery_alex, "%s",              "BAT0" },
 #endif
 #if defined(HOST_duke)
 	{ datetime,     "%s",           "%H:%M:%S" },
