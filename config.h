@@ -69,17 +69,15 @@ static const struct arg args[] = {
 	{ netspeed_rx,  "%sB/s   ",        "wlp59s0" },
 #endif
 	{ lm_sensors,   "%s   ",           NULL },
+#if !defined(HOST_duke)
 	{ load_avg,     "%s   ",           NULL },
 	{ ram_perc,     "%s%% ",           NULL },
 	{ swap_perc,    "%s%%   ",         NULL },
+#endif
 #if defined(HOST_duke)
 	{ battery_alex, "%s",              "BAT0" },
 #elif defined(HOST_gigantor)
 	{ battery_alex, "%s",              "BAT0" },
 #endif
-#if defined(HOST_duke)
-	{ datetime,     "%s",           "%H:%M:%S" },
-#else
 	{ datetime,     "%s",           "%a %d %b %Y %H:%M:%S" },
-#endif
 };
