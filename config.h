@@ -79,5 +79,8 @@ static const struct arg args[] = {
 #elif defined(HOST_gigantor)
 	{ battery_alex, "%s",              "BAT0" },
 #endif
+#if defined(HOST_emperor)
+	{ keymap,       "%s   ",           NULL },
+#endif
 	{ datetime,     "%s",           "%a %d %b %Y %H:%M:%S" },
 };
