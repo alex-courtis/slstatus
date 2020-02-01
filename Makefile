@@ -28,7 +28,7 @@ COM =\
 	components/volume\
 	components/wifi\
 	components/lm_sensors\
-	components/xnvctrl
+	$(shell [ -f /usr/include/NVCtrl/NVCtrlLib.h ] && echo components/xnvctrl)
 
 all: slstatus
 
