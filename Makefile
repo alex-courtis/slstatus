@@ -27,7 +27,8 @@ COM =\
 	components/user\
 	components/volume\
 	components/wifi\
-	components/lm_sensors
+	components/lm_sensors\
+	components/xnvctrl
 
 all: slstatus
 
