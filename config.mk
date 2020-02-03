@@ -12,8 +12,8 @@ X11LIB = /usr/X11R6/lib
 
 # flags
 CPPFLAGS = -I$(X11INC) -D_DEFAULT_SOURCE -DHOST_$(shell hostname)
-CFLAGS   = -std=c99 -pedantic -Wall -Wextra -Os
-LDFLAGS  = -L$(X11LIB) -s
+CFLAGS   = -std=c99 -pedantic -Wall -Wextra -Os -g
+LDFLAGS  = -L$(X11LIB)
 LDLIBS   = -lX11 -lsensors $(shell [ -f /usr/lib/libXNVCtrl.so ] && echo "-lXNVCtrl")
 
 # compiler and linker
