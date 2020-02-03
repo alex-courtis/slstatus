@@ -59,6 +59,7 @@ static const char unknown_str[] = "n/a";
  * wifi_perc           WiFi signal in percent          interface name (wlan0)
  * wifi_essid          WiFi ESSID                      interface name (wlan0)
  * lm_sensors          lm_sensors data aggregation     NULL
+ * nvml                nvml data aggregation           NULL
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
@@ -69,6 +70,9 @@ static const struct arg args[] = {
 	{ netspeed_rx,  "%sB/s   ",        "wlp59s0" },
 #endif
 	{ lm_sensors,   "%s   ",           NULL },
+#if defined(HOST_emperor)
+	{ nvml,         "%s   ",           NULL },
+#endif
 #if !defined(HOST_duke)
 	{ load_avg,     "%s   ",           NULL },
 	{ ram_perc,     "%s%% ",           NULL },
