@@ -83,6 +83,3 @@ const char *wifi_essid(const char *interface);
 
 /* lm_sensors */
 const char *lm_sensors(void);
-
-/* nvctrl */
-const char *nvctrl(void);

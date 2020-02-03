@@ -69,9 +69,6 @@ static const struct arg args[] = {
 	{ netspeed_rx,  "%sB/s   ",        "wlp59s0" },
 #endif
 	{ lm_sensors,   "%s   ",           NULL },
-#if defined(HOST_emperor)
-	{ nvctrl,       "%s   ",           NULL },
-#endif
 #if !defined(HOST_duke)
 	{ load_avg,     "%s   ",           NULL },
 	{ ram_perc,     "%s%% ",           NULL },
