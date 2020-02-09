@@ -78,6 +78,7 @@ static const struct arg args[] = {
 	{ ram_perc,     "%s%% ",           NULL },
 	{ swap_perc,    "%s%%   ",         NULL },
 #endif
+	{ keymap,       "%s",              NULL },
 #if defined(HOST_duke)
 	{ battery_alex, "%s",              "BAT0" },
 #elif defined(HOST_gigantor)
