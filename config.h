@@ -63,7 +63,7 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
-	{ netspeed_rx,  "%sB/s   ",        "wlp4s0" },
+	{ netspeed_rx,  "%sB/s   ",        "wlp0s20f3" },
 #elif defined(HOST_gigantor)
 	{ netspeed_rx,  "%sB/s   ",        "wlp59s0" },
 #endif
