@@ -7,12 +7,12 @@
 const char *
 load_avg(void)
 {
-	double avgs[3];
+	double avgs[1];
 
-	if (getloadavg(avgs, 3) < 0) {
+	if (getloadavg(avgs, 1) < 1) {
 		warn("getloadavg: Failed to obtain load average");
 		return NULL;
 	}
 
-	return bprintf("%.2f %.2f %.2f", avgs[0], avgs[1], avgs[2]);
+	return bprintf("%.2f", avgs[0]);
 }
