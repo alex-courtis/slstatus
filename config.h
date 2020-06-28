@@ -30,6 +30,7 @@ static const char unknown_str[] = "n/a";
  * hostname            hostname                        NULL
  * ipv4                IPv4 address                    interface name (eth0)
  * ipv6                IPv6 address                    interface name (eth0)
+ * lm_sensors          AMC sensor data                 NULL
  * kernel_release      `uname -r`                      NULL
  * keyboard_indicators caps/num lock indicators        format string (c?n?)
  *                                                     see keyboard_indicators.c
@@ -40,6 +41,7 @@ static const char unknown_str[] = "n/a";
  * netspeed_tx         transfer network speed          interface name (wlan0)
  * num_files           number of files in a directory  path
  *                                                     (/home/foo/Inbox/cur)
+ * nvml                AMC sensor data                 NULL
  * ram_free            free memory in GB               NULL
  * ram_perc            memory usage in percent         NULL
  * ram_total           total memory size in GB         NULL
@@ -63,22 +65,13 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
-	{ netspeed_rx,  "%sB/s   ",        "wlp0s20f3" },
-#elif defined(HOST_gigantor)
-	{ netspeed_rx,  "%sB/s   ",        "wlp59s0" },
-#endif
-#if defined(HOST_duke)
 	{ battery_alex, "%s",              "BAT0" },
 #elif defined(HOST_gigantor)
 	{ battery_alex, "%s",              "BAT0" },
-#endif
-	{ lm_sensors,   "%s   ",           NULL },
-#if defined(HOST_emperor)
-	{ nvml,         "%s   ",           NULL },
 #endif
 	{ ram_perc,     "%s%% ",           NULL },
 	{ swap_perc,    "%s%%   ",         NULL },
 	{ load_avg,     "%s   ",           NULL },
 	{ keymap,       "%s",              NULL },
-	{ datetime,     "%s",              "%H:%M:%S" },
+	{ datetime,     "%s",              "%a %d %b %Y %H:%M:%S" },
 };
