@@ -69,6 +69,7 @@ static const struct arg args[] = {
 #elif defined(HOST_gigantor)
 	{ battery_alex, "%s",              "BAT0" },
 #endif
+	{ lm_sensors,   "%s   ",           NULL },
 	{ ram_perc,     "%s%% ",           NULL },
 	{ swap_perc,    "%s%%   ",         NULL },
 	{ load_avg,     "%s   ",           NULL },
