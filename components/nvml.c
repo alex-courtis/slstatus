@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include <stdio.h>
 #include "nvml.h"
 
 #include "../util.h"
@@ -9,11 +8,9 @@
  */
 
 const char *nvml(void) {
-    static char b[1024];
     nvmlReturn_t result;
-    unsigned int device_count = 0;
-    unsigned int temperatureInC = 0;
-    unsigned int powerInMilliWatts = 0;
+    unsigned int device_count;
+    unsigned int temperatureInC, powerInMilliWatts;
 
     result = nvmlInit();
     if (NVML_SUCCESS != result)
@@ -51,9 +48,9 @@ const char *nvml(void) {
     }
 
     result = nvmlDeviceGetPowerUsage(device, &powerInMilliWatts);
-    if (NVML_SUCCESS != result && NVML_ERROR_NOT_SUPPORTED != result)
+    if (NVML_SUCCESS != result)
     {
-        warn("nvmlDeviceGetPowerUsage fail: %s %d", nvmlErrorString(result), result);
+        warn("nvmlDeviceGetPowerUsage fail: %s", nvmlErrorString(result));
         return NULL;
     }
 
@@ -63,16 +60,5 @@ const char *nvml(void) {
         warn("nvmlShutdown fail: %s", nvmlErrorString(result));
     }
 
-    char *pb = b;
-
-    if (powerInMilliWatts)
-        pb += sprintf(pb, "%uW", (powerInMilliWatts + 500) / 1000);
-
-    if (pb != b)
-        pb += sprintf(pb, " ");
-
-    if (temperatureInC)
-        pb += sprintf(pb, "%u°C", temperatureInC);
-
-    return b;
+    return bprintf("%uW   %u°C", (powerInMilliWatts + 500) / 1000, temperatureInC);
 }

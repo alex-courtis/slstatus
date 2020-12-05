@@ -65,10 +65,9 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
-	{ battery_alex, "%s   ",           "BAT0" },
+	{ battery_alex, "%s",              "BAT0" },
 #elif defined(HOST_gigantor)
-	{ battery_alex, "%s   ",           "BAT0" },
-	{ nvml,         "%s ",             NULL },
+	{ battery_alex, "%s",              "BAT0" },
 #endif
 	{ lm_sensors,   "%s   ",           NULL },
 	{ ram_perc,     "%s%% ",           NULL },
