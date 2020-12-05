@@ -130,7 +130,6 @@
 			const char *remaining = battery_remaining(bat);
 			if (remaining)
 				pb += sprintf(pb, " %s", battery_remaining(bat));
-			pb += sprintf(pb, "%s", "   ");
 			return b;
 		} else {
 			return "";
