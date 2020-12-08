@@ -70,7 +70,6 @@ static const struct arg args[] = {
 	{ nvml,         "%s ",             NULL },
 #elif defined(HOST_gigantor)
 	{ battery_alex, "%s",              "BAT0" },
-	{ nvml,         "%s ",             NULL },
 #endif
 	{ lm_sensors,   "%s   ",           NULL },
 	{ ram_perc,     "%s%% ",           NULL },
