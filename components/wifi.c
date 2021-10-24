@@ -94,11 +94,12 @@
 
 		close(sockfd);
 
-		if (!strcmp(id, "")) {
-			return NULL;
+		// AMC no news is good news
+		if (strcmp(id, "") == 0) {
+			return bprintf("%s disconnected   ", interface);
+		} else {
+			return "";
 		}
-
-		return id;
 	}
 #elif defined(__OpenBSD__)
 	#include <net/if.h>
