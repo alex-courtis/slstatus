@@ -18,43 +18,38 @@ const char *nvml(void) {
     result = nvmlInit();
     if (NVML_SUCCESS != result)
     { 
-        warn("nvmlInit fail: %s", nvmlErrorString(result));
-        return NULL;
+        return "";
     }
 
     result = nvmlDeviceGetCount(&device_count);
     if (NVML_SUCCESS != result)
     { 
-        warn("nvmlDeviceGetCount fail: %s", nvmlErrorString(result));
-        return NULL;
+        return "";
     }
 
     // once card is enough for now
     if (device_count != 1)
     {
-        return NULL;
+        return "";
     }
 
     nvmlDevice_t device;
     result = nvmlDeviceGetHandleByIndex(0, &device);
     if (NVML_SUCCESS != result)
     {
-        warn("nvmlDeviceGetHandleByIndex fail: %s", nvmlErrorString(result));
-        return NULL;
+        return "";
     }
 
     result = nvmlDeviceGetTemperature(device, NVML_TEMPERATURE_GPU, &temperatureInC);
     if (NVML_SUCCESS != result)
     {
-        warn("nvmlDeviceGetTemperature fail: %s", nvmlErrorString(result));
-        return NULL;
+        return "";
     }
 
     result = nvmlDeviceGetPowerUsage(device, &powerInMilliWatts);
     if (NVML_SUCCESS != result && NVML_ERROR_NOT_SUPPORTED != result)
     {
-        warn("nvmlDeviceGetPowerUsage fail: %s", nvmlErrorString(result));
-        return NULL;
+        return "";
     }
 
     result = nvmlShutdown();
@@ -66,10 +61,7 @@ const char *nvml(void) {
     char *pb = b;
 
     if (powerInMilliWatts)
-        pb += sprintf(pb, "%uW", (powerInMilliWatts + 500) / 1000);
-
-    if (pb != b)
-        pb += sprintf(pb, " ");
+        pb += sprintf(pb, "%uW ", (powerInMilliWatts + 500) / 1000);
 
     if (temperatureInC)
         pb += sprintf(pb, "%u°C", temperatureInC);
