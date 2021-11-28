@@ -64,7 +64,7 @@ const char *nvml(void) {
         pb += sprintf(pb, "%uW ", (powerInMilliWatts + 500) / 1000);
 
     if (temperatureInC)
-        pb += sprintf(pb, "%u°C", temperatureInC);
+        pb += sprintf(pb, "%u°C ", temperatureInC);
 
     return b;
 }
