@@ -68,7 +68,7 @@ static const struct arg args[] = {
 	{ wifi_essid,   "%s",              "wlp0s20f3" },
 	{ battery_alex, "%s",              "BAT0" },
 #elif defined(HOST_emperor)
-	{ nvml,         "%s",              NULL },
+	{ nvml,         "%s   ",           NULL },
 #elif defined(HOST_gigantor)
 	{ wifi_essid,   "%s",              "wlp59s0" },
 	{ battery_alex, "%s",              "BAT0" },
