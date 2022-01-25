@@ -14,7 +14,7 @@ X11LIB = /usr/X11R6/lib
 CPPFLAGS = -I$(X11INC) -D_DEFAULT_SOURCE -DHOST_$(shell hostname)
 CFLAGS   = -std=c99 -pedantic -Wall -Wextra -Os -g
 LDFLAGS  = -L$(X11LIB)
-LDLIBS   = -lX11 -lsensors $(shell [ -f /usr/lib/libnvidia-ml.so ] && echo "-lnvidia-ml")
+LDLIBS   = -lX11 -lsensors -lpulse -lm -lpthread $(shell [ -f /usr/lib/libnvidia-ml.so ] && echo "-lnvidia-ml")
 
 # compiler and linker
 CC = cc

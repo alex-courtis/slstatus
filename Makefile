@@ -28,9 +28,13 @@ COM =\
 	components/volume\
 	components/wifi\
 	components/lm_sensors\
+	components/pa\
 	$(shell [ -f /usr/lib/libnvidia-ml.so ] && echo "components/nvml")
 
-all: slstatus
+all: slstatus tags
+
+tags: $(wildcard *.h *.c components/*.h components/*.c)
+	ctags-c $(CFLAGS) $(CPPFLAGS) --project-src $(^)
 
 $(COM:=.o): config.mk $(REQ:=.h)
 slstatus.o: slstatus.c slstatus.h arg.h config.h config.mk $(REQ:=.h)
@@ -45,7 +49,7 @@ slstatus: slstatus.o $(COM:=.o) $(REQ:=.o)
 	$(CC) -o $@ $(LDFLAGS) $(COM:=.o) $(REQ:=.o) slstatus.o $(LDLIBS)
 
 clean:
-	rm -f slstatus slstatus.o $(COM:=.o) $(REQ:=.o)
+	rm -f tags slstatus slstatus.o $(COM:=.o) $(REQ:=.o)
 
 strip: all
 	strip -s slstatus

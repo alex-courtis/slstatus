@@ -86,3 +86,6 @@ const char *lm_sensors(void);
 
 /* nvml */
 const char *nvml(void);
+
+/* pa */
+const char *pa(void);
