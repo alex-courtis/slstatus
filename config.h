@@ -60,23 +60,30 @@ static const char unknown_str[] = "n/a";
  * vol_perc            OSS/ALSA volume in percent      mixer file (/dev/mixer)
  * wifi_perc           WiFi signal in percent          interface name (wlan0)
  * wifi_essid          WiFi ESSID                      interface name (wlan0)
+ *
+ * battery_off_power   battery perccentage remaining   battery name (BAT0)
  * lm_sensors          lm_sensors data aggregation     NULL
- * nvml                nvml data aggregation           NULL
+ * nvml                nvidia data aggregation         NULL
+ * pa                  pulse audio                     NULL
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
-	{ wifi_essid,   "%s",              "wlp0s20f3" },
-	{ battery_alex, "%s",              "BAT0" },
+	{ wifi_essid,		"%s",		"wlp0s20f3" },
+	{ pa,			"%s",		NULL },
+	{ battery_off_power,	"%s",		"BAT0" },
 #elif defined(HOST_emperor)
-	{ nvml,         "%s   ",           NULL },
+	{ pa,			"%s",		NULL },
+	{ nvml,			"%s",		NULL },
 #elif defined(HOST_gigantor)
-	{ wifi_essid,   "%s",              "wlp59s0" },
-	{ battery_alex, "%s",              "BAT0" },
+	{ wifi_essid,		"%s",		"wlp59s0" },
+	{ pa,			"%s",		NULL },
+	{ battery_off_power,	"%s",		"BAT0" },
+#else
+	{ pa,			"%s",		NULL },
 #endif
-	{ pa,           "%s",              NULL },
-	{ lm_sensors,   "%s   ",           NULL },
-	{ ram_perc,     "%s%% ",           NULL },
-	{ swap_perc,    "%s%%   ",         NULL },
-	{ load_avg,     "%s   ",           NULL },
-	{ datetime,     "%s",              "%a %d %b %H:%M:%S" },
+	{ lm_sensors,		"%s   ",	NULL },
+	{ ram_perc,		"%s%% ",	NULL },
+	{ swap_perc,		"%s%%   ",	NULL },
+	{ load_avg,		"%s   ",	NULL },
+	{ datetime,		"%s",		"%a %d %b %H:%M:%S" },
 };

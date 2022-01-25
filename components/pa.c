@@ -13,9 +13,9 @@
 
 #define PA_SUBSCRIPTIONS PA_SUBSCRIPTION_MASK_SINK | PA_SUBSCRIPTION_MASK_SOURCE | PA_SUBSCRIPTION_MASK_SERVER
 
-#define PAD3 bp != buf ? "   " : ""
-
 struct state {
+	bool available;
+
 	int src_perc;
 	int sink_perc;
 
@@ -24,11 +24,10 @@ struct state {
 
 	char *sink_def;
 	char *src_def;
-
-	bool available;
 };
 
 int calc_perc(pa_cvolume volume, bool mute);
+void reset_state(struct state *s);
 void source_info_cb(pa_context *c, const pa_source_info *i, int eol, void *userdata);
 void sink_info_cb(pa_context *c, const pa_sink_info *i, int eol, void *userdata);
 void server_info_cb(pa_context *c, const pa_server_info *i, void *userdata);
@@ -47,9 +46,33 @@ int calc_perc(pa_cvolume volume, bool mute) {
 	}
 }
 
+void reset_state(struct state *s) {
+	if (!s) {
+		return;
+	}
+
+	s->available = false;
+
+	s->src_perc = 0;
+	s->sink_perc = 0;
+
+	s->other_unmuted_srcs = false;
+	s->other_unmuted_sinks = false;
+
+	if (s->sink_def) {
+		free(s->sink_def);
+	}
+	s->sink_def = NULL;
+	if (s->src_def) {
+		free(s->src_def);
+	}
+	s->src_def = NULL;
+}
+
 void source_info_cb(pa_context *c, const pa_source_info *i, int eol, void *userdata) {
-	(void)(c);
-	(void)(eol);
+	(void)c;
+	(void)eol;
+
 	struct state *s = userdata;
 	if (!i) {
 		return;
@@ -62,8 +85,9 @@ void source_info_cb(pa_context *c, const pa_source_info *i, int eol, void *userd
 }
 
 void sink_info_cb(pa_context *c, const pa_sink_info *i, int eol, void *userdata) {
-	(void)(c);
-	(void)(eol);
+	(void)c;
+	(void)eol;
+
 	struct state *s = userdata;
 	if (!i) {
 		return;
@@ -96,7 +120,8 @@ void server_info_cb(pa_context *c, const pa_server_info *i, void *userdata) {
 }
 
 void subscribe_cb(pa_context *c, pa_subscription_event_type_t type, uint32_t index, void *userdata) {
-	(void)(index);
+	(void)index;
+
 	struct state *s = userdata;
 	switch (type & PA_SUBSCRIPTION_EVENT_FACILITY_MASK) {
 		case PA_SUBSCRIPTION_EVENT_SINK:
@@ -126,8 +151,6 @@ void *pa_loop(void *data) {
 		pa_context *context = pa_context_new(mainloop_api, "slstatus");
 		pa_context_connect(context, NULL, PA_CONTEXT_NOFAIL, NULL);
 		pa_context_set_subscribe_callback(context, subscribe_cb, s);
-
-		s->available = false;
 
 		bool first_run = true;
 		bool fail_or_terminate = false;
@@ -162,6 +185,7 @@ void *pa_loop(void *data) {
 
 			pa_mainloop_iterate(mainloop, 1, NULL);
 		}
+		reset_state(s);
 
 		// pa is very leaky; best effort here
 		if (context) {
@@ -171,14 +195,6 @@ void *pa_loop(void *data) {
 		if (mainloop) {
 			pa_mainloop_free(mainloop);
 		}
-		if (s->sink_def) {
-			free(s->sink_def);
-			s->sink_def = NULL;
-		}
-		if (s->src_def) {
-			free(s->src_def);
-			s->sink_def = NULL;
-		}
 	}
 
 	return NULL;
@@ -186,21 +202,22 @@ void *pa_loop(void *data) {
 
 const char *pa() {
 	static struct state s = { 0 };
-	static char buf[2048];
+	static char b[1024];
 	static pthread_t pa_thread = 0;
 
 	if (!pa_thread) {
+		reset_state(&s);
 		pthread_create(&pa_thread, NULL, &pa_loop, &s);
 		return "";
 	}
 
-	char *bp = buf;
+	char *bp = b;
 	if (s.available) {
 		if (s.other_unmuted_srcs)
-			bp += sprintf(bp, "Warning: Non-default Microphones Are Active");
+			bp += sprintf(bp, "%sWarning: Non-default Microphones Are Active", PAD3);
 
 		if (s.src_perc != -1)
-			bp += sprintf(bp, "%sMic %d%%", PAD3, s.src_perc);
+			bp += sprintf(bp, "%sMICROPHONE %d%%", PAD3, s.src_perc);
 
 		if (s.sink_perc == -1)
 			bp += sprintf(bp, "%sMute", PAD3);
@@ -211,8 +228,8 @@ const char *pa() {
 		bp += sprintf(bp, "%sPulse Audio Unavailable", PAD3);
 	}
 
-	bp += sprintf(bp, "%s", PAD3);
+	bp += sprintf(bp, "%s", PAD4);
 
-	return bprintf("%s", buf);
+	return bprintf("%s", b);
 }
 

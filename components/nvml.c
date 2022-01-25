@@ -58,13 +58,14 @@ const char *nvml(void) {
         warn("nvmlShutdown fail: %s", nvmlErrorString(result));
     }
 
-    char *pb = b;
+    char *bp = b;
 
     if (powerInMilliWatts)
-        pb += sprintf(pb, "%uW ", (powerInMilliWatts + 500) / 1000);
+        bp += sprintf(bp, "%uW ", (powerInMilliWatts + 500) / 1000);
 
     if (temperatureInC)
-        pb += sprintf(pb, "%u°C", temperatureInC);
+        bp += sprintf(bp, "%u°C", temperatureInC);
+    bp += sprintf(bp, "%s", PAD4);
 
     return b;
 }

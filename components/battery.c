@@ -121,16 +121,16 @@
 
 	/* empty unless discharging, then shows percentage and remaining */
 	const char *
-	battery_alex(const char *bat)
+	battery_off_power(const char *bat)
 	{
 		static char b[1024];
 		if (!strcmp(battery_state(bat), "-")) {
-			char *pb = b;
-			pb += sprintf(pb, "%s%%", battery_perc(bat));
+			char *bp = b;
+			bp += sprintf(bp, "Bat %s%%", battery_perc(bat));
 			const char *remaining = battery_remaining(bat);
 			if (remaining)
-				pb += sprintf(pb, " %s", battery_remaining(bat));
-			pb += sprintf(pb, "%s", "   ");
+				bp += sprintf(bp, " %s", battery_remaining(bat));
+			bp += sprintf(bp, "%s", PAD4);
 			return b;
 		} else {
 			return "";
