@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 #include <string.h>
+#include <stdlib.h>
 #include <sensors/sensors.h>
 
 #include "../util.h"
@@ -26,7 +27,7 @@ Sts collect() {
 	int feature_nr;
 	const sensors_subfeature *subfeature;
 	int subfeature_nr;
-	const char *label;
+	char *label = NULL;
 	double value;
 	enum Chip chip;
 	Sts sts = {
@@ -130,6 +131,9 @@ Sts collect() {
 						break;
 				}
 			}
+			if (label) {
+				free(label);
+			}
 		}
 	}
 
@@ -139,7 +143,7 @@ Sts collect() {
 	return sts;
 }
 
-/* render average stats as a string with a trailing newline */
+/* render max stats as a string with a trailing newline */
 /* static buffer is returned, do not free */
 const char *render(const Sts sts) {
 	static char buf[128];
