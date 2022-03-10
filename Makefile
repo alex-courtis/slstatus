@@ -29,6 +29,7 @@ COM =\
 	components/wifi\
 	components/lm_sensors\
 	components/pa\
+	components/net\
 	$(shell [ -f /usr/lib/libnvidia-ml.so ] && echo "components/nvml")
 
 all: slstatus tags

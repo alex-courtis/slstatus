@@ -89,3 +89,7 @@ const char *nvml(void);
 
 /* pa */
 const char *pa(void);
+
+/* net */
+const char *vpn_state(const char *interface);
+

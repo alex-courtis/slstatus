@@ -65,6 +65,7 @@ static const char unknown_str[] = "n/a";
  * lm_sensors          lm_sensors data aggregation     NULL
  * nvml                nvidia data aggregation         NULL
  * pa                  pulse audio                     NULL
+ * vpn_state           VPN active                      interface name (vpn0)
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
@@ -78,6 +79,7 @@ static const struct arg args[] = {
 	{ wifi_essid,		"%s",		"wlp59s0" },
 	{ pa,			"%s",		NULL },
 	{ battery_off_power,	"%s",		"BAT0" },
+	{ vpn_state,		"%s",		"vpn0" },
 #else
 	{ pa,			"%s",		NULL },
 #endif
