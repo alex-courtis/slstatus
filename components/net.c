@@ -20,7 +20,6 @@ vpn_state(const char *interface)
 		return DOWN;
 	}
 	if (!(fp = fopen(path, "r"))) {
-		warn("fopen '%s':", path);
 		return DOWN;
 	}
 	p = fgets(status, 5, fp);
