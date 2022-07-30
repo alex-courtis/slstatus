@@ -13,7 +13,7 @@ typedef struct {
 	int amdgpuTempMax;
 	int amdgpuPowerTotal;
 	int k10tempTdieMax;
-	int thinkpadFan;
+	int thinkpadFanMax;
 	int dellFanMax;
 	int coreTempMax;
 } Sts;
@@ -34,7 +34,7 @@ Sts collect() {
 			.amdgpuPowerTotal = 0,
 			.amdgpuTempMax = 0,
 			.k10tempTdieMax = 0,
-			.thinkpadFan = 0,
+			.thinkpadFanMax = 0,
 			.dellFanMax = 0,
 			.coreTempMax = 0,
 	};
@@ -77,7 +77,9 @@ Sts collect() {
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_FAN_INPUT:
 								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.thinkpadFan = (int)(value + 0.5);
+								if ((short)value != -1) {
+									sts.thinkpadFanMax = MAX(sts.thinkpadFanMax, (int) (value + 0.5));
+								}
 								break;
 							default:
 								break;
@@ -156,8 +158,8 @@ const char *render(const Sts sts) {
 	if (sts.k10tempTdieMax)
 		pbuf += sprintf(pbuf, "%i°C", sts.k10tempTdieMax);
 
-	if (sts.thinkpadFan)
-		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.thinkpadFan);
+	if (sts.thinkpadFanMax)
+		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.thinkpadFanMax);
 
 	if (sts.dellFanMax)
 		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.dellFanMax);
@@ -180,7 +182,7 @@ lm_sensors()
 	if (invocation == 0)
 		output = render(collect());
 
-	if (++invocation >= 5)
+	if (++invocation >= 3)
 		invocation = 0;
 
 	return output;
