@@ -216,7 +216,7 @@ const char *pa() {
 		if (s.other_unmuted_srcs)
 			bp += sprintf(bp, "%sWarning: Non-default Microphones Are Active", PAD3);
 
-		if (s.src_perc != -1)
+		if (s.src_perc > 0)
 			bp += sprintf(bp, "%sMICROPHONE %d%%", PAD3, s.src_perc);
 
 		if (s.sink_perc == -1)
