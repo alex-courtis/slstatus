@@ -76,7 +76,6 @@ static const struct arg args[] = {
 	{ pa,			"%s",		NULL },
 	{ nvml,			"%s",		NULL },
 #elif defined(HOST_gigantor)
-	{ wifi_essid,		"%s",		"wlp59s0" },
 	{ pa,			"%s",		NULL },
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ vpn_state,		"%s",		"vpn0" },
