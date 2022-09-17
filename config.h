@@ -79,6 +79,12 @@ static const struct arg args[] = {
 	{ pa,			"%s",		NULL },
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ vpn_state,		"%s",		"vpn0" },
+#elif defined(HOST_tinygod)
+	{ pa,			"%s",		NULL },
+	{ vpn_state,		"%s",		"vpn0" },
+#elif defined(HOST_count)
+	{ pa,			"%s",		NULL },
+	{ vpn_state,		"%s",		"vpn0" },
 #else
 	{ pa,			"%s",		NULL },
 #endif
