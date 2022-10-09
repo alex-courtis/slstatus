@@ -88,7 +88,7 @@ static const struct arg args[] = {
 #else
 	{ pa,			"%s",		NULL },
 #endif
-	{ lm_sensors,		"%s   ",	NULL },
+	{ lm_sensors,		"%s   ",	"gpu" },
 	{ ram_perc,		"%s%% ",	NULL },
 	{ swap_perc,		"%s%%   ",	NULL },
 	{ load_avg,		"%s   ",	NULL },

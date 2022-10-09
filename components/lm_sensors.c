@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 #include <string.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <sensors/sensors.h>
 
@@ -147,16 +148,24 @@ Sts collect() {
 
 /* render max stats as a string with a trailing newline */
 /* static buffer is returned, do not free */
-const char *render(const Sts sts) {
+const char *render(const Sts sts, const bool gpu) {
 	static char buf[128];
 
 	char *pbuf = buf;
 
+	if (gpu) {
+		if (sts.amdgpuPowerTotal)
+			pbuf += sprintf(pbuf, "%s%iW", pbuf == buf ? "" : " ", sts.amdgpuPowerTotal);
+
+		if (sts.amdgpuTempMax)
+			pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.amdgpuTempMax);
+	}
+
 	if (sts.coreTempMax)
-		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.coreTempMax);
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "    ", sts.coreTempMax);
 
 	if (sts.k10tempTdieMax)
-		pbuf += sprintf(pbuf, "%i°C", sts.k10tempTdieMax);
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "    ", sts.k10tempTdieMax);
 
 	if (sts.thinkpadFanMax)
 		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.thinkpadFanMax);
@@ -164,23 +173,17 @@ const char *render(const Sts sts) {
 	if (sts.dellFanMax)
 		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.dellFanMax);
 
-	if (sts.amdgpuTempMax)
-		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.amdgpuTempMax);
-
-	if (sts.amdgpuPowerTotal)
-		sprintf(pbuf, "%s%iW", pbuf == buf ? "" : " ", sts.amdgpuPowerTotal);
-
 	return buf;
 }
 
 const char *
-lm_sensors()
+lm_sensors(const char *opts)
 {
 	static int invocation = 0;
 	static const char *output;
 
 	if (invocation == 0)
-		output = render(collect());
+		output = render(collect(), strstr(opts, "gpu"));
 
 	if (++invocation >= 3)
 		invocation = 0;
