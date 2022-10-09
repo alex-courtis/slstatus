@@ -30,7 +30,6 @@ static const char unknown_str[] = "n/a";
  * hostname            hostname                        NULL
  * ipv4                IPv4 address                    interface name (eth0)
  * ipv6                IPv6 address                    interface name (eth0)
- * lm_sensors          AMC sensor data                 NULL
  * kernel_release      `uname -r`                      NULL
  * keyboard_indicators caps/num lock indicators        format string (c?n?)
  *                                                     see keyboard_indicators.c
@@ -61,11 +60,15 @@ static const char unknown_str[] = "n/a";
  * wifi_perc           WiFi signal in percent          interface name (wlan0)
  * wifi_essid          WiFi ESSID                      interface name (wlan0)
  *
+ *
+ * AMC
+ *
  * battery_off_power   battery perccentage remaining   battery name (BAT0)
  * lm_sensors          lm_sensors data aggregation     NULL
  * nvml                nvidia data aggregation         NULL
  * pa                  pulse audio                     NULL
  * vpn_state           VPN active                      interface name (vpn0)
+ * file_message        first 128 characters up to \n   path
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
@@ -73,6 +76,7 @@ static const struct arg args[] = {
 	{ pa,			"%s",		NULL },
 	{ battery_off_power,	"%s",		"BAT0" },
 #elif defined(HOST_emperor)
+	{ file_message, "%s",		"/tmp/rival.battery" },
 	{ pa,			"%s",		NULL },
 	{ nvml,			"%s",		NULL },
 #elif defined(HOST_gigantor)
@@ -80,9 +84,6 @@ static const struct arg args[] = {
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ vpn_state,		"%s",		"vpn0" },
 #elif defined(HOST_tinygod)
-	{ pa,			"%s",		NULL },
-	{ vpn_state,		"%s",		"vpn0" },
-#elif defined(HOST_count)
 	{ pa,			"%s",		NULL },
 	{ vpn_state,		"%s",		"vpn0" },
 #else

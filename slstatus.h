@@ -93,3 +93,6 @@ const char *pa(void);
 /* net */
 const char *vpn_state(const char *interface);
 
+/* file_message */
+const char *file_message(const char *path);
+

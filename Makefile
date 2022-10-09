@@ -30,6 +30,7 @@ COM =\
 	components/lm_sensors\
 	components/pa\
 	components/net\
+	components/file_message\
 	$(shell [ -f /usr/lib/libnvidia-ml.so ] && echo "components/nvml")
 
 all: slstatus tags
