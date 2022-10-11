@@ -148,12 +148,12 @@ Sts collect() {
 
 /* render max stats as a string with a trailing newline */
 /* static buffer is returned, do not free */
-const char *render(const Sts sts, const bool gpu) {
+const char *render(const Sts sts, const bool amdgpu) {
 	static char buf[128];
 
 	char *pbuf = buf;
 
-	if (gpu) {
+	if (amdgpu) {
 		if (sts.amdgpuPowerTotal)
 			pbuf += sprintf(pbuf, "%s%iW", pbuf == buf ? "" : " ", sts.amdgpuPowerTotal);
 
@@ -162,10 +162,10 @@ const char *render(const Sts sts, const bool gpu) {
 	}
 
 	if (sts.coreTempMax)
-		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "    ", sts.coreTempMax);
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "  ", sts.coreTempMax);
 
 	if (sts.k10tempTdieMax)
-		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "    ", sts.k10tempTdieMax);
+		pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : "  ", sts.k10tempTdieMax);
 
 	if (sts.thinkpadFanMax)
 		pbuf += sprintf(pbuf, "%s%irpm", pbuf == buf ? "" : " ", sts.thinkpadFanMax);
@@ -183,7 +183,7 @@ lm_sensors(const char *opts)
 	static const char *output;
 
 	if (invocation == 0)
-		output = render(collect(), strstr(opts, "gpu"));
+		output = render(collect(), strstr(opts, "amdgpu"));
 
 	if (++invocation >= 3)
 		invocation = 0;

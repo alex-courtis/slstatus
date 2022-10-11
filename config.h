@@ -64,7 +64,7 @@ static const char unknown_str[] = "n/a";
  * AMC
  *
  * battery_off_power   battery perccentage remaining   battery name (BAT0)
- * lm_sensors          lm_sensors data aggregation     NULL
+ * lm_sensors          lm_sensors data aggregation     options: amdgpu
  * nvml                nvidia data aggregation         NULL
  * pa                  pulse audio                     NULL
  * vpn_state           VPN active                      interface name (vpn0)
@@ -76,7 +76,7 @@ static const struct arg args[] = {
 	{ pa,			"%s",		NULL },
 	{ battery_off_power,	"%s",		"BAT0" },
 #elif defined(HOST_emperor)
-	{ file_message, "%s",		"/tmp/rival.battery" },
+	{ file_message,		"%s",		"/tmp/rival.battery" },
 	{ pa,			"%s",		NULL },
 	{ nvml,			"%s",		NULL },
 #elif defined(HOST_gigantor)
@@ -89,7 +89,7 @@ static const struct arg args[] = {
 #else
 	{ pa,			"%s",		NULL },
 #endif
-	{ lm_sensors,		"%s   ",	"gpu" },
+	{ lm_sensors,		"%s   ",	"" },
 	{ ram_perc,		"%s%% ",	NULL },
 	{ swap_perc,		"%s%%   ",	NULL },
 	{ load_avg,		"%s   ",	NULL },
