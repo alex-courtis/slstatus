@@ -5,6 +5,7 @@ extern char buf[1024];
 
 #define LEN(x) (sizeof (x) / sizeof *(x))
 
+#define PAD2 bp != b ? "  " : ""
 #define PAD3 bp != b ? "   " : ""
 #define PAD4 bp != b ? "    " : ""
 
