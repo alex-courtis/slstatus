@@ -242,7 +242,7 @@ const char *pa(const char *opts) {
 		bp += sprintf(bp, "%sPulse Audio Unavailable", PAD3);
 	}
 
-	bp += sprintf(bp, "%s", PAD4);
+	bp += sprintf(bp, "%s", PAD3);
 
 	return bprintf("%s", b);
 }
