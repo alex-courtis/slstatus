@@ -17,13 +17,13 @@ const char *nvml(void) {
 
     result = nvmlInit();
     if (NVML_SUCCESS != result)
-    { 
+    {
         return "";
     }
 
     result = nvmlDeviceGetCount(&device_count);
     if (NVML_SUCCESS != result)
-    { 
+    {
         return "";
     }
 
@@ -65,7 +65,7 @@ const char *nvml(void) {
 
     if (temperatureInC)
         bp += sprintf(bp, "%u°C", temperatureInC);
-    bp += sprintf(bp, "%s", PAD4);
+    bp += sprintf(bp, "%s", PAD2);
 
     return b;
 }
