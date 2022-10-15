@@ -66,28 +66,30 @@ static const char unknown_str[] = "n/a";
  * battery_off_power   battery perccentage remaining   battery name (BAT0)
  * lm_sensors          lm_sensors data aggregation     options: amdgpu
  * nvml                nvidia data aggregation         NULL
- * pa                  pulse audio                     NULL
+ * pa                  pulse audio                     options: vol_exceptional,mic_exceptional
+ *                                                     vol is exceptional if not 100%
+ *                                                     mic is exceptional if not muted
  * vpn_state           VPN active                      interface name (vpn0)
  * file_message        first 128 characters up to \n   path
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
 	{ wifi_essid,		"%s",		"wlp0s20f3" },
-	{ pa,			"%s",		NULL },
+	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ battery_off_power,	"%s",		"BAT0" },
 #elif defined(HOST_emperor)
 	{ file_message,		"%s",		"/tmp/rival.battery" },
-	{ pa,			"%s",		NULL },
+	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ nvml,			"%s",		NULL },
 #elif defined(HOST_gigantor)
-	{ pa,			"%s",		NULL },
+	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ vpn_state,		"%s",		"vpn0" },
 #elif defined(HOST_tinygod)
-	{ pa,			"%s",		NULL },
+	{ pa,			"%s",		"" },
 	{ vpn_state,		"%s",		"vpn0" },
 #else
-	{ pa,			"%s",		NULL },
+	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 #endif
 	{ lm_sensors,		"%s   ",	"" },
 	{ ram_perc,		"%s%% ",	NULL },
