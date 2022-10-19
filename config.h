@@ -82,7 +82,7 @@ static const struct arg args[] = {
 	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ nvml,			"%s",		NULL },
 #elif defined(HOST_gigantor)
-	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
+	{ pa,			"%s",		"" },
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ vpn_state,		"%s",		"vpn0" },
 #elif defined(HOST_tinygod)
