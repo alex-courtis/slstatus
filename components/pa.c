@@ -217,7 +217,7 @@ const char *pa(const char *opts) {
 			bp += sprintf(bp, "%sWarning: Non-default Microphones Are Active", PAD3);
 
 		if (strstr(opts, "mic_exceptional")) {
-			if (s.src_perc != -1) {
+			if (s.src_perc > 0) {
 				bp += sprintf(bp, "%sMic %d%%", PAD3, s.src_perc);
 			}
 		} else {
