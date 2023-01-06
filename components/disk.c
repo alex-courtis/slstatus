@@ -32,6 +32,24 @@ disk_perc(const char *path)
 }
 
 const char *
+disk_perc_non_zero(const char *path)
+{
+	struct statvfs fs;
+
+	if (statvfs(path, &fs) < 0) {
+		warn("statvfs '%s':", path);
+		return NULL;
+	}
+
+	int perc = (int)(100 * (1.0f - ((float)fs.f_bavail / (float)fs.f_blocks)));
+
+	if (perc > 0)
+		return bprintf("%s %d%%   ", path, perc);
+	else
+		return "";
+}
+
+const char *
 disk_total(const char *path)
 {
 	struct statvfs fs;

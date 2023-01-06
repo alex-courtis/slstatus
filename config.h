@@ -88,12 +88,12 @@ static const struct arg args[] = {
 #elif defined(HOST_tinygod)
 	{ pa,			"%s",		"" },
 	{ vpn_state,		"%s",		"vpn0" },
-	{ disk_perc,		"/run %s%%  ",	"/run" },
-	{ disk_perc,		"/tmp %s%%   ",	"/tmp" },
 #else
 	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 #endif
 	{ lm_sensors,		"%s   ",	"" },
+	{ disk_perc_non_zero,	"%s",	        "/run" },
+	{ disk_perc_non_zero,	"%s",	        "/tmp" },
 	{ ram_perc,		"%s%% ",	NULL },
 	{ swap_perc,		"%s%%   ",	NULL },
 	{ load_avg,		"%s   ",	NULL },
