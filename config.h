@@ -80,7 +80,6 @@ static const struct arg args[] = {
 #elif defined(HOST_emperor)
 	{ file_message,		"%s",		"/tmp/rival.battery" },
 	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
-	{ nvml,			"%s",		NULL },
 #elif defined(HOST_gigantor)
 	{ pa,			"%s",		"" },
 	{ battery_off_power,	"%s",		"BAT0" },
