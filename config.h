@@ -77,20 +77,24 @@ static const struct arg args[] = {
 	{ wifi_essid,		"%s",		"wlp0s20f3" },
 	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ battery_off_power,	"%s",		"BAT0" },
+	{ lm_sensors,		"%s   ",	"" },
 #elif defined(HOST_emperor)
 	{ file_message,		"%s",		"/tmp/rival.battery" },
 	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
+	{ lm_sensors,		"%s   ",	"amdgpu" },
 #elif defined(HOST_gigantor)
 	{ pa,			"%s",		"" },
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ vpn_state,		"%s",		"vpn0" },
+	{ lm_sensors,		"%s   ",	"" },
 #elif defined(HOST_tinygod)
 	{ pa,			"%s",		"" },
 	{ vpn_state,		"%s",		"vpn0" },
+	{ lm_sensors,		"%s   ",	"" },
 #else
 	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
-#endif
 	{ lm_sensors,		"%s   ",	"" },
+#endif
 	{ disk_perc_non_zero,	"%s",	        "/run" },
 	{ disk_perc_non_zero,	"%s",	        "/tmp" },
 	{ ram_perc,		"%s%% ",	NULL },
