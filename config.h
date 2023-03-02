@@ -71,6 +71,7 @@ static const char unknown_str[] = "n/a";
  *                                                     mic is exceptional if not muted
  * vpn_state           VPN active                      interface name (vpn0)
  * file_message        first 128 characters up to \n   path
+ * tmp_perc_gt
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)
@@ -95,8 +96,7 @@ static const struct arg args[] = {
 	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ lm_sensors,		"%s   ",	"" },
 #endif
-	{ disk_perc_non_zero,	"%s",	        "/run" },
-	{ disk_perc_non_zero,	"%s",	        "/tmp" },
+	{ tmp_perc_gt,          "%s",           "15" },
 	{ ram_perc,		"%s%% ",	NULL },
 	{ swap_perc,		"%s%%   ",	NULL },
 	{ load_avg,		"%s   ",	NULL },

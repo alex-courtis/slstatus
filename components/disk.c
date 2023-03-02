@@ -1,5 +1,8 @@
 /* See LICENSE file for copyright and license details. */
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
 #include <sys/statvfs.h>
 
 #include "../util.h"
@@ -32,21 +35,32 @@ disk_perc(const char *path)
 }
 
 const char *
-disk_perc_non_zero(const char *path)
+tmp_perc_gt(const char *perc)
 {
-	struct statvfs fs;
+	static const int n = 2;
+	static const char paths[2][PATH_MAX] = {
+		"/tmp",
+		"/run",
+	};
+	static char buf[256];
 
-	if (statvfs(path, &fs) < 0) {
-		warn("statvfs '%s':", path);
-		return NULL;
+	struct statvfs fs;
+	char *pbuf = buf;
+
+	int minimum = atoi(perc);
+
+	for (int i = 0; i < n; i++) {
+		if (statvfs(paths[i], &fs) < 0) {
+			warn("statvfs '%s':", paths[i]);
+			return NULL;
+		}
+		int actual = (int)(100 * (1.0f - ((float)fs.f_bavail / (float)fs.f_blocks)));
+
+		if (actual >= minimum)
+			pbuf += sprintf(pbuf, "%s %d%%   ", paths[i], actual);
 	}
 
-	int perc = (int)(100 * (1.0f - ((float)fs.f_bavail / (float)fs.f_blocks)));
-
-	if (perc > 0)
-		return bprintf("%s %d%%   ", path, perc);
-	else
-		return "";
+	return buf;
 }
 
 const char *
