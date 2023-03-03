@@ -71,7 +71,7 @@ static const char unknown_str[] = "n/a";
  *                                                     mic is exceptional if not muted
  * vpn_state           VPN active                      interface name (vpn0)
  * file_message        first 128 characters up to \n   path
- * tmp_perc_gt
+ * tmp_perc_gt         /tmp /run percentage used       minimum percentage
  */
 static const struct arg args[] = {
 #if defined(HOST_duke)

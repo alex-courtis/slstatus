@@ -11,7 +11,7 @@
 enum Chip { k10Temp, amdgpu, thinkpad, coretemp, dell };
 
 typedef struct {
-	int amdgpuTempMax;
+	int amdgpuTempJunction;
 	int amdgpuPowerTotal;
 	int k10tempTdieMax;
 	int thinkpadFanMax;
@@ -33,7 +33,7 @@ Sts collect() {
 	enum Chip chip;
 	Sts sts = {
 			.amdgpuPowerTotal = 0,
-			.amdgpuTempMax = 0,
+			.amdgpuTempJunction = 0,
 			.k10tempTdieMax = 0,
 			.thinkpadFanMax = 0,
 			.dellFanMax = 0,
@@ -89,8 +89,11 @@ Sts collect() {
 					case amdgpu:
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
-								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.amdgpuTempMax = MAX(sts.amdgpuTempMax, (int) (value + 0.5));
+								// edge, junction, mem; mangohud uses edge
+								if (strcmp(label, "junction") == 0) {
+									sensors_get_value(chip_name, subfeature->number, &value);
+									sts.amdgpuTempJunction = (int) (value + 0.5);
+								}
 								break;
 							case SENSORS_SUBFEATURE_POWER_AVERAGE:
 								sensors_get_value(chip_name, subfeature->number, &value);
@@ -103,6 +106,7 @@ Sts collect() {
 					case k10Temp:
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
+								// Tctl is offset +27 degrees, Tdie is derived from junction
 								if (strcmp(label, "Tdie") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.k10tempTdieMax = MAX(sts.k10tempTdieMax, (int)(value + 0.5));
@@ -157,8 +161,8 @@ const char *render(const Sts sts, const bool amdgpu) {
 		if (sts.amdgpuPowerTotal)
 			pbuf += sprintf(pbuf, "%s%iW", pbuf == buf ? "" : " ", sts.amdgpuPowerTotal);
 
-		if (sts.amdgpuTempMax)
-			pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.amdgpuTempMax);
+		if (sts.amdgpuTempJunction)
+			pbuf += sprintf(pbuf, "%s%i°C", pbuf == buf ? "" : " ", sts.amdgpuTempJunction);
 	}
 
 	if (sts.coreTempMax)
