@@ -49,6 +49,7 @@ tmp_perc_gt(const char *perc)
 
 	int minimum = atoi(perc);
 
+	*pbuf = '\0';
 	for (int i = 0; i < n; i++) {
 		if (statvfs(paths[i], &fs) < 0) {
 			warn("statvfs '%s':", paths[i]);
