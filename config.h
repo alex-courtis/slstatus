@@ -89,9 +89,7 @@ static const struct arg args[] = {
 #else
 	{ lm_sensors,		"%s   ",	"" },
 #endif
-	{ tmp_perc_gt,          "%s",           "15" },
+	{ tmp_perc_gt,		"%s",		"15" },
 	{ ram_perc,		"%s%% ",	NULL },
-	{ swap_perc,		"%s%%   ",	NULL },
-	{ load_avg,		"%s   ",	NULL },
-	{ datetime,		"%s",		"%a %d %b %H:%M:%S" },
+	{ swap_perc,		"%s%%",		NULL },
 };
