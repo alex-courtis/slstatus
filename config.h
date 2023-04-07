@@ -76,24 +76,19 @@ static const char unknown_str[] = "n/a";
 static const struct arg args[] = {
 #if defined(HOST_duke)
 	{ wifi_essid,		"%s",		"wlp0s20f3" },
-	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ lm_sensors,		"%s   ",	"" },
 #elif defined(HOST_emperor)
 	{ file_message,		"%s",		"/tmp/rival.battery" },
-	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ lm_sensors,		"%s   ",	"amdgpu" },
 #elif defined(HOST_gigantor)
-	{ pa,			"%s",		"" },
 	{ battery_off_power,	"%s",		"BAT0" },
 	{ vpn_state,		"%s",		"vpn0" },
 	{ lm_sensors,		"%s   ",	"" },
 #elif defined(HOST_tinygod)
-	{ pa,			"%s",		"" },
 	{ vpn_state,		"%s",		"vpn0" },
 	{ lm_sensors,		"%s   ",	"" },
 #else
-	{ pa,			"%s",		"vol_exceptional,mic_exceptional" },
 	{ lm_sensors,		"%s   ",	"" },
 #endif
 	{ tmp_perc_gt,          "%s",           "15" },
