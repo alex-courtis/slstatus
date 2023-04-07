@@ -58,7 +58,7 @@ tmp_perc_gt(const char *perc)
 		int actual = (int)(100 * (1.0f - ((float)fs.f_bavail / (float)fs.f_blocks)));
 
 		if (actual >= minimum)
-			pbuf += sprintf(pbuf, "%s %d%%   ", paths[i], actual);
+			pbuf += sprintf(pbuf, "┃ %s %d%% ", paths[i], actual);
 	}
 
 	return buf;

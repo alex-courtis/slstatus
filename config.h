@@ -76,20 +76,18 @@ static const char unknown_str[] = "n/a";
 static const struct arg args[] = {
 #if defined(HOST_duke)
 	{ wifi_essid,		"%s",		"wlp0s20f3" },
-	{ lm_sensors,		"%s   ",	"" },
+	{ lm_sensors,		"%s",		"" },
 #elif defined(HOST_emperor)
 	{ file_message,		"%s",		"/tmp/rival.battery" },
-	{ lm_sensors,		"%s   ",	"amdgpu" },
+	{ lm_sensors,		"%s",		"amdgpu" },
 #elif defined(HOST_gigantor)
 	{ vpn_state,		"%s",		"vpn0" },
-	{ lm_sensors,		"%s   ",	"" },
+	{ lm_sensors,		"%s",		"" },
 #elif defined(HOST_tinygod)
 	{ vpn_state,		"%s",		"vpn0" },
-	{ lm_sensors,		"%s   ",	"" },
+	{ lm_sensors,		"%s",		"" },
 #else
-	{ lm_sensors,		"%s   ",	"" },
+	{ lm_sensors,		"%s",		"" },
 #endif
 	{ tmp_perc_gt,		"%s",		"15" },
-	{ ram_perc,		"%s%% ",	NULL },
-	{ swap_perc,		"%s%%",		NULL },
 };

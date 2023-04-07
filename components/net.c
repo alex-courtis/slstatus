@@ -6,7 +6,7 @@
 #include "../util.h"
 
 #define DOWN ""
-#define VPN_UP "VPN   "
+#define VPN_UP "┃ VPN "
 
 const char *
 vpn_state(const char *interface)

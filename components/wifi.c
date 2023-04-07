@@ -96,7 +96,7 @@
 
 		// only print missing
 		if (strcmp(id, "") == 0) {
-			return bprintf("%s disconnected    ", interface);
+			return bprintf("┃ %s disconnected ", interface);
 		} else {
 			return "";
 		}
