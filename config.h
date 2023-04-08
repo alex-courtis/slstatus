@@ -74,5 +74,9 @@ static const char unknown_str[] = "n/a";
  * tmp_perc_gt         /tmp /run percentage used       minimum percentage
  */
 static const struct arg args[] = {
+#if defined(HOST_emperor)
+	{ lm_sensors,		"%s",		"amdgpu" },
+#else
 	{ lm_sensors,		"%s",		"" },
+#endif
 };
