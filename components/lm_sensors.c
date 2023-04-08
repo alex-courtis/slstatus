@@ -159,17 +159,17 @@ const char *render(const Sts sts, const bool amdgpu) {
 
 	if (amdgpu) {
 		if (sts.amdgpuPowerTotal)
-			pbuf += sprintf(pbuf, "┃ %iW ", sts.amdgpuPowerTotal);
+			pbuf += sprintf(pbuf, "│ %iW ", sts.amdgpuPowerTotal);
 
 		if (sts.amdgpuTempJunction)
 			pbuf += sprintf(pbuf, "%i°C ", sts.amdgpuTempJunction);
 	}
 
 	if (sts.coreTempMax)
-		pbuf += sprintf(pbuf, "┃ %i°C ", sts.coreTempMax);
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTempMax);
 
 	if (sts.k10tempTdieMax)
-		pbuf += sprintf(pbuf, "┃ %i°C ", sts.k10tempTdieMax);
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdieMax);
 
 	if (sts.thinkpadFanMax)
 		pbuf += sprintf(pbuf, "%irpm ", sts.thinkpadFanMax);
