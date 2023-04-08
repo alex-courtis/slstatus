@@ -94,9 +94,6 @@ main(int argc, char *argv[])
 			len += ret;
 		}
 
-		// strip mystery trailing space
-		status[len - 1] = '\0';
-
 		if (sflag) {
 			puts(status);
 			fflush(stdout);
