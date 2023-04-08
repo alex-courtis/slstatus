@@ -74,9 +74,7 @@ static const char unknown_str[] = "n/a";
  * tmp_perc_gt         /tmp /run percentage used       minimum percentage
  */
 static const struct arg args[] = {
-#if defined(HOST_emperor)
-	{ file_message,		"%s",		"/tmp/rival.battery" },
-#elif defined(HOST_gigantor)
+#if defined(HOST_gigantor)
 	{ vpn_state,		"%s",		"vpn0" },
 #elif defined(HOST_tinygod)
 	{ vpn_state,		"%s",		"vpn0" },
