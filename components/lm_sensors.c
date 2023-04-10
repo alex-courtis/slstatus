@@ -90,7 +90,7 @@ Sts collect() {
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
 								// edge, junction, mem; mangohud uses edge
-								if (strcmp(label, "junction") == 0) {
+								if (strcmp(label, "edge") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.amdgpuTempJunction = (int) (value + 0.5);
 								}
