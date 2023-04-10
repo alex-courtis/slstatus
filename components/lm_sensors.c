@@ -11,12 +11,12 @@
 enum Chip { k10Temp, amdgpu, thinkpad, coretemp, dell };
 
 typedef struct {
-	int amdgpuTempJunction;
-	int amdgpuPowerTotal;
-	int k10tempTdieMax;
-	int thinkpadFanMax;
-	int dellFanMax;
-	int coreTempMax;
+	int amdgpuTempEdge;
+	int amdgpuPowerAverage;
+	int k10tempTdie;
+	int thinkpadFan;
+	int dellFan;
+	int coreTemp;
 } Sts;
 
 /* discover and collect interesting sensor stats */
@@ -32,12 +32,12 @@ Sts collect() {
 	double value;
 	enum Chip chip;
 	Sts sts = {
-			.amdgpuPowerTotal = 0,
-			.amdgpuTempJunction = 0,
-			.k10tempTdieMax = 0,
-			.thinkpadFanMax = 0,
-			.dellFanMax = 0,
-			.coreTempMax = 0,
+			.amdgpuPowerAverage = 0,
+			.amdgpuTempEdge = 0,
+			.k10tempTdie = 0,
+			.thinkpadFan = 0,
+			.dellFan = 0,
+			.coreTemp = 0,
 	};
 
 	/* init; clean up is done at end */
@@ -79,7 +79,7 @@ Sts collect() {
 							case SENSORS_SUBFEATURE_FAN_INPUT:
 								sensors_get_value(chip_name, subfeature->number, &value);
 								if ((short)value != -1) {
-									sts.thinkpadFanMax = MAX(sts.thinkpadFanMax, (int) (value + 0.5));
+									sts.thinkpadFan = MAX(sts.thinkpadFan, (int) (value + 0.5));
 								}
 								break;
 							default:
@@ -92,12 +92,12 @@ Sts collect() {
 								// edge, junction, mem; mangohud uses edge
 								if (strcmp(label, "edge") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
-									sts.amdgpuTempJunction = (int) (value + 0.5);
+									sts.amdgpuTempEdge = MAX(sts.amdgpuTempEdge, (int)(value + 0.5));
 								}
 								break;
 							case SENSORS_SUBFEATURE_POWER_AVERAGE:
 								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.amdgpuPowerTotal += (int) (value + 0.5);
+								sts.amdgpuPowerAverage = MAX(sts.amdgpuPowerAverage, (int)(value + 0.5));
 								break;
 							default:
 								break;
@@ -109,7 +109,7 @@ Sts collect() {
 								// Tctl is offset +27 degrees, Tdie is derived from junction
 								if (strcmp(label, "Tdie") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
-									sts.k10tempTdieMax = MAX(sts.k10tempTdieMax, (int)(value + 0.5));
+									sts.k10tempTdie = MAX(sts.k10tempTdie, (int)(value + 0.5));
 								}
 								break;
 							default:
@@ -120,7 +120,7 @@ Sts collect() {
 						switch (subfeature->type) {
 						case SENSORS_SUBFEATURE_TEMP_INPUT:
 							sensors_get_value(chip_name, subfeature->number, &value);
-							sts.coreTempMax = MAX(sts.coreTempMax, (int)(value + 0.5));
+							sts.coreTemp = MAX(sts.coreTemp, (int)(value + 0.5));
 							break;
 						default:
 							break;
@@ -130,7 +130,7 @@ Sts collect() {
 						switch (subfeature->type) {
 						case SENSORS_SUBFEATURE_FAN_INPUT:
 							sensors_get_value(chip_name, subfeature->number, &value);
-							sts.dellFanMax = MAX(sts.dellFanMax, (int)(value + 0.5));
+							sts.dellFan = MAX(sts.dellFan, (int)(value + 0.5));
 							break;
 						default:
 							break;
@@ -158,24 +158,24 @@ const char *render(const Sts sts, const bool amdgpu) {
 	char *pbuf = buf;
 
 	if (amdgpu) {
-		if (sts.amdgpuPowerTotal)
-			pbuf += sprintf(pbuf, "│ %iW ", sts.amdgpuPowerTotal);
+		if (sts.amdgpuPowerAverage)
+			pbuf += sprintf(pbuf, "│ %iW ", sts.amdgpuPowerAverage);
 
-		if (sts.amdgpuTempJunction)
-			pbuf += sprintf(pbuf, "%i°C ", sts.amdgpuTempJunction);
+		if (sts.amdgpuTempEdge)
+			pbuf += sprintf(pbuf, "%i°C ", sts.amdgpuTempEdge);
 	}
 
-	if (sts.coreTempMax)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTempMax);
+	if (sts.coreTemp)
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTemp);
 
-	if (sts.k10tempTdieMax)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdieMax);
+	if (sts.k10tempTdie)
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdie);
 
-	if (sts.thinkpadFanMax)
-		pbuf += sprintf(pbuf, "%irpm ", sts.thinkpadFanMax);
+	if (sts.thinkpadFan)
+		pbuf += sprintf(pbuf, "%irpm ", sts.thinkpadFan);
 
-	if (sts.dellFanMax)
-		pbuf += sprintf(pbuf, "%irpm ", sts.dellFanMax);
+	if (sts.dellFan)
+		pbuf += sprintf(pbuf, "%irpm ", sts.dellFan);
 
 	return buf;
 }
