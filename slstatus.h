@@ -85,9 +85,6 @@ const char *wifi_essid(const char *interface);
 /* lm_sensors */
 const char *lm_sensors(const char *opts);
 
-/* nvml */
-const char *nvml(void);
-
 /* pa */
 const char *pa(void);
 

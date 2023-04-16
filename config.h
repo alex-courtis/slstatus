@@ -40,7 +40,6 @@ static const char unknown_str[] = "n/a";
  * netspeed_tx         transfer network speed          interface name (wlan0)
  * num_files           number of files in a directory  path
  *                                                     (/home/foo/Inbox/cur)
- * nvml                AMC sensor data                 NULL
  * ram_free            free memory in GB               NULL
  * ram_perc            memory usage in percent         NULL
  * ram_total           total memory size in GB         NULL
@@ -65,10 +64,7 @@ static const char unknown_str[] = "n/a";
  *
  * battery_off_power   battery perccentage remaining   battery name (BAT0)
  * lm_sensors          lm_sensors data aggregation     options: amdgpu
- * nvml                nvidia data aggregation         NULL
- * pa                  pulse audio                     options: vol_exceptional,mic_exceptional
- *                                                     vol is exceptional if not 100%
- *                                                     mic is exceptional if not muted
+ * pa                  pulse audio                     NULL
  * vpn_state           VPN active                      interface name (vpn0)
  * file_message        first 128 characters up to \n   path
  * tmp_perc_gt         /tmp /run percentage used       minimum percentage
