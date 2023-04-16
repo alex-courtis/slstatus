@@ -200,7 +200,7 @@ void *pa_loop(void *data) {
 	return NULL;
 }
 
-const char *pa(const char *opts) {
+const char *pa(void) {
 	static struct state s = { 0 };
 	static char b[1024];
 	static pthread_t pa_thread = 0;
@@ -212,38 +212,23 @@ const char *pa(const char *opts) {
 	}
 
 	char *bp = b;
+	*bp = '\0';
+
 	if (s.available) {
 		if (s.other_unmuted_srcs)
-			bp += sprintf(bp, "%sWarning: Non-default Microphones Are Active", PAD3);
+			bp += sprintf(bp, "║ Non-default Microphones Are Active ║ ");
 
-		if (strstr(opts, "mic_exceptional")) {
-			if (s.src_perc > 0) {
-				bp += sprintf(bp, "%sMic %d%%", PAD3, s.src_perc);
-			}
-		} else {
-			if (s.src_perc >= 0) {
-				bp += sprintf(bp, "%sMic %d%%", PAD3, s.src_perc);
-			}
+		if (s.src_perc > 0) {
+			bp += sprintf(bp, "│ M %d%% ", s.src_perc);
 		}
 
-		if (strstr(opts, "vol_exceptional")) {
-			if (s.sink_perc == -1) {
-				bp += sprintf(bp, "%sVol Mute", PAD3);
-			} else if (s.sink_perc != 100) {
-				bp += sprintf(bp, "%sVol %d%%", PAD3, s.sink_perc);
-			}
-		} else {
-			if (s.sink_perc >= 0) {
-				bp += sprintf(bp, "%sVol %d%%", PAD3, s.sink_perc);
-			}
+		if (s.sink_perc == -1) {
+			bp += sprintf(bp, "│ S Mute ");
+		} else if (s.sink_perc != 100) {
+			bp += sprintf(bp, "│ S %d%% ", s.sink_perc);
 		}
-
-	} else {
-		bp += sprintf(bp, "%sPulse Audio Unavailable", PAD3);
 	}
 
-	bp += sprintf(bp, "%s", PAD3);
-
-	return bprintf("%s", b);
+	return b;
 }
 
