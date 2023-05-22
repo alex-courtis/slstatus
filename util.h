@@ -5,8 +5,6 @@ extern char buf[1024];
 
 #define LEN(x) (sizeof (x) / sizeof *(x))
 
-#define PAD4 bp != b ? "    " : ""
-
 extern char *argv0;
 
 void warn(const char *, ...);

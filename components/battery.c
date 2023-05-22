@@ -1,8 +1,11 @@
 /* See LICENSE file for copyright and license details. */
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "../util.h"
+
+#define PERC_CRITICAL 25
 
 #if defined(__linux__)
 	#include <limits.h>
@@ -119,22 +122,47 @@
 		return "";
 	}
 
-	/* empty unless discharging, then shows percentage and remaining */
+	/* empty when charging at 100% */
 	const char *
-	battery_off_power(const char *bat)
+	battery_summary(const char *bat)
 	{
 		static char b[1024];
-		if (!strcmp(battery_state(bat), "-")) {
-			char *bp = b;
-			bp += sprintf(bp, "Bat %s%%", battery_perc(bat));
-			const char *remaining = battery_remaining(bat);
-			if (remaining)
-				bp += sprintf(bp, " %s", battery_remaining(bat));
-			bp += sprintf(bp, "%s", PAD4);
-			return b;
-		} else {
+		static char out[1028];
+		static bool on = false;
+
+		char *bp = b;
+
+		const char *state = battery_state(bat);
+		if (!state)
 			return "";
+		const char st = state[0];
+
+		int perc = -1;
+		if (sscanf(battery_perc(bat), "%d", &perc) != 1)
+			return "";
+
+		if (st == '+' && perc == 100)
+			return "";
+
+		bp += sprintf(bp, "%d%% %c ", perc, st);
+
+		const char *remaining = battery_remaining(bat);
+		if (remaining && strlen(remaining) > 0)
+			bp += sprintf(bp, "%s ", remaining);
+
+		if (perc < PERC_CRITICAL && st != '+')
+			on = !on;
+		else
+			on = true;
+
+		if (!on) {
+			for (char *zp = b; zp < bp; zp++) {
+				*zp = ' ';
+			}
 		}
+
+		sprintf(out, "│ %s", b);
+		return out;
 	}
 #elif defined(__OpenBSD__)
 	#include <fcntl.h>

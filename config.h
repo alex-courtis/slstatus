@@ -62,7 +62,7 @@ static const char unknown_str[] = "n/a";
  *
  * AMC
  *
- * battery_off_power   battery perccentage remaining   battery name (BAT0)
+ * battery_summary     percentage, state, remaining    battery name (BAT0)
  * lm_sensors          lm_sensors data aggregation     options: amdgpu
  * pa                  pulse audio                     NULL
  * vpn_state           VPN active                      interface name (vpn0)
@@ -70,10 +70,26 @@ static const char unknown_str[] = "n/a";
  * tmp_perc_gt         /tmp /run percentage used       minimum percentage
  */
 static const struct arg args[] = {
-	{ pa,			"%s",		NULL },
-#if defined(HOST_emperor)
-	{ lm_sensors,		"%s",		"amdgpu" },
-#else
-	{ lm_sensors,		"%s",		"" },
+#if defined(HOST_gigantor)
+	{ battery_summary,		"%s",		"BAT0" },
+	{ vpn_state,			"%s",		"vpn0" },
 #endif
+
+#if defined(HOST_duke)
+	{ battery_summary,		"%s",		"BAT0" },
+#endif
+
+	{ pa,					"%s",		NULL },
+
+#if defined(HOST_emperor)
+	{ lm_sensors,			"%s",		"amdgpu" },
+#else
+	{ lm_sensors,			"%s",		"" },
+#endif
+
+	{ tmp_perc_gt,			"%s",		"15" },
+	{ ram_perc,				"│ %s%% ",	NULL },
+	{ swap_perc,			"│ %s%% ",	NULL },
+	{ load_avg,				"│ %s ",	NULL },
+	{ datetime,				"│ %s",		"%a %d %b %H:%M:%S" },
 };
