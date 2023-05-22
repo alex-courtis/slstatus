@@ -10,6 +10,11 @@
 
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
 
+#define ASUS_WMI_FAN_THRESHOLD 800
+#define ASUS_WMI_WATER_PUMP_THRESHOLD 3000
+
+#define THINKPAD_FAN_THRESHOLD 1200
+
 void dbg(const char *restrict __format, ...) {
 	if (!DBG)
 		return;
@@ -27,17 +32,35 @@ typedef struct {
 	int amdgpuPowerAverage;
 	int k10tempTdie;
 	int thinkpadFan;
+	bool thinkpadFanOn;
 	int dellFan;
+	bool dellFanOn;
 	int coreTemp;
 	int asusWmiFanCpu;
+	bool asusWmiFanCpuOn;
 	int asusWmiFanCpuOpt;
+	bool asusWmiFanCpuOptOn;
 	int asusWmiFanChassis1;
+	bool asusWmiFanChassis1On;
 	int asusWmiFanChassis2;
+	bool asusWmiFanChassis2On;
 	int asusWmiWaterPump;
+	bool asusWmiWaterPumpOn;
 } Sts;
 
+Sts sts = { 0 };
+
+void zero_sts() {
+	sts.amdgpuPowerAverage = 0;
+	sts.amdgpuTempEdge = 0;
+	sts.k10tempTdie = 0;
+	sts.thinkpadFan = 0;
+	sts.dellFan = 0;
+	sts.coreTemp = 0;
+}
+
 /* discover and collect interesting sensor stats */
-Sts collect() {
+void collect() {
 
 	const sensors_chip_name *chip_name;
 	int chip_nr;
@@ -48,14 +71,8 @@ Sts collect() {
 	char *label = NULL;
 	double value;
 	enum Chip chip;
-	Sts sts = {
-			.amdgpuPowerAverage = 0,
-			.amdgpuTempEdge = 0,
-			.k10tempTdie = 0,
-			.thinkpadFan = 0,
-			.dellFan = 0,
-			.coreTemp = 0,
-	};
+
+	zero_sts();
 
 	/* init; clean up is done at end */
 	sensors_init(NULL);
@@ -95,13 +112,13 @@ Sts collect() {
 				if (!(subfeature->flags & SENSORS_MODE_R))
 					continue;
 
-				sensors_get_value(chip_name, subfeature->number, &value);
-				dbg("  %s %g\n", subfeature->name, value);
+				dbg("  %s\n", subfeature->name);
 
 				switch(chip) {
 					case thinkpad:
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_FAN_INPUT:
+								sensors_get_value(chip_name, subfeature->number, &value);
 								if ((short)value != -1) {
 									sts.thinkpadFan = MAX(sts.thinkpadFan, (int) (value + 0.5));
 								}
@@ -115,10 +132,12 @@ Sts collect() {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
 								// edge, junction, mem; mangohud uses edge
 								if (strcmp(label, "edge") == 0) {
+									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.amdgpuTempEdge = MAX(sts.amdgpuTempEdge, (int)(value + 0.5));
 								}
 								break;
 							case SENSORS_SUBFEATURE_POWER_AVERAGE:
+								sensors_get_value(chip_name, subfeature->number, &value);
 								sts.amdgpuPowerAverage = MAX(sts.amdgpuPowerAverage, (int)(value + 0.5));
 								break;
 							default:
@@ -130,6 +149,7 @@ Sts collect() {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
 								// Tctl is offset +27 degrees, Tdie is derived from junction
 								if (strcmp(label, "Tdie") == 0) {
+									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.k10tempTdie = MAX(sts.k10tempTdie, (int)(value + 0.5));
 								}
 								break;
@@ -140,6 +160,7 @@ Sts collect() {
 					case coretemp:
 						switch (subfeature->type) {
 						case SENSORS_SUBFEATURE_TEMP_INPUT:
+							sensors_get_value(chip_name, subfeature->number, &value);
 							sts.coreTemp = MAX(sts.coreTemp, (int)(value + 0.5));
 							break;
 						default:
@@ -149,6 +170,7 @@ Sts collect() {
 					case dell:
 						switch (subfeature->type) {
 						case SENSORS_SUBFEATURE_FAN_INPUT:
+							sensors_get_value(chip_name, subfeature->number, &value);
 							sts.dellFan = MAX(sts.dellFan, (int)(value + 0.5));
 							break;
 						default:
@@ -159,14 +181,20 @@ Sts collect() {
 						switch (subfeature->type) {
 						case SENSORS_SUBFEATURE_FAN_INPUT:
 							if (strcmp(label, "CPU Fan") == 0) {
+								sensors_get_value(chip_name, subfeature->number, &value);
 								sts.asusWmiFanCpu = (int)(value + 0.5);
 							} else if (strcmp(label, "CPU OPT") == 0) {
-								sts.asusWmiFanCpuOpt = (int)(value + 0.5);
+								// this one is too slow
+								// sensors_get_value(chip_name, subfeature->number, &value);
+								// sts.asusWmiFanCpuOpt = (int)(value + 0.5);
 							} else if (strcmp(label, "Chassis Fan 1") == 0) {
+								sensors_get_value(chip_name, subfeature->number, &value);
 								sts.asusWmiFanChassis1 = (int)(value + 0.5);
 							} else if (strcmp(label, "Chassis Fan 2") == 0) {
+								sensors_get_value(chip_name, subfeature->number, &value);
 								sts.asusWmiFanChassis2 = (int)(value + 0.5);
 							} else if (strcmp(label, "Water Pump 1") == 0) {
+								sensors_get_value(chip_name, subfeature->number, &value);
 								sts.asusWmiWaterPump = (int)(value + 0.5);
 							}
 							break;
@@ -184,13 +212,11 @@ Sts collect() {
 
 	/* promises not to error */
 	sensors_cleanup();
-
-	return sts;
 }
 
 /* render max stats as a string with a trailing newline */
 /* static buffer is returned, do not free */
-const char *render(const Sts sts, const bool amdgpu) {
+const char *render(const bool amdgpu) {
 	static char buf[128];
 
 	char *pbuf = buf;
@@ -209,26 +235,33 @@ const char *render(const Sts sts, const bool amdgpu) {
 	if (sts.k10tempTdie)
 		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdie);
 
-	if (sts.asusWmiFanCpu)
-		pbuf += sprintf(pbuf, "│ CPU %iR ", sts.asusWmiFanCpu);
+	if (sts.asusWmiFanCpu > ASUS_WMI_FAN_THRESHOLD) {
+		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanCpuOn = !sts.asusWmiFanCpuOn) ? "CPU" : "   ", sts.asusWmiFanCpu);
+	}
 
-	if (sts.asusWmiFanCpuOpt)
-		pbuf += sprintf(pbuf, "│ OPT %iR ", sts.asusWmiFanCpuOpt);
+	if (sts.asusWmiFanCpuOpt > ASUS_WMI_FAN_THRESHOLD) {
+		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanCpuOptOn = !sts.asusWmiFanCpuOptOn) ? "OPT" : "   ", sts.asusWmiFanCpuOpt);
+	}
 
-	if (sts.asusWmiFanChassis1)
-		pbuf += sprintf(pbuf, "│ Chas1 %iR ", sts.asusWmiFanChassis1);
+	if (sts.asusWmiFanChassis1 > ASUS_WMI_FAN_THRESHOLD) {
+		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanChassis1On = !sts.asusWmiFanChassis1On) ? "Chas1" : "     ", sts.asusWmiFanChassis1);
+	}
 
-	if (sts.asusWmiFanChassis2)
-		pbuf += sprintf(pbuf, "│ Chas2 %iR ", sts.asusWmiFanChassis2);
+	if (sts.asusWmiFanChassis2 > ASUS_WMI_FAN_THRESHOLD) {
+		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanChassis2On = !sts.asusWmiFanChassis2On) ? "Chas2" : "     ", sts.asusWmiFanChassis2);
+	}
 
-	if (sts.asusWmiWaterPump)
-		pbuf += sprintf(pbuf, "│ Pump %iR ", sts.asusWmiWaterPump);
+	if (sts.asusWmiWaterPump > ASUS_WMI_WATER_PUMP_THRESHOLD) {
+		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiWaterPumpOn = !sts.asusWmiWaterPumpOn) ? "Pump" : "    ", sts.asusWmiWaterPump);
+	}
 
-	if (sts.thinkpadFan)
-		pbuf += sprintf(pbuf, "│ %iR ", sts.thinkpadFan);
+	if (sts.thinkpadFan > THINKPAD_FAN_THRESHOLD) {
+		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.thinkpadFanOn = !sts.thinkpadFanOn) ? "Fan" : "   ", sts.thinkpadFan);
+	}
 
-	if (sts.dellFan)
-		pbuf += sprintf(pbuf, "│ %iR ", sts.dellFan);
+	if (sts.dellFan > THINKPAD_FAN_THRESHOLD) {
+		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.dellFanOn = !sts.dellFanOn) ? "Fan" : "   ", sts.dellFan);
+	}
 
 	return buf;
 }
@@ -239,8 +272,11 @@ lm_sensors(const char *opts)
 	static int invocation = 0;
 	static const char *output;
 
-	if (invocation == 0)
-		output = render(collect(), strstr(opts, "amdgpu"));
+	if (invocation == 0) {
+		collect();
+	}
+
+	output = render(strstr(opts, "amdgpu"));
 
 	if (++invocation >= 3)
 		invocation = 0;
