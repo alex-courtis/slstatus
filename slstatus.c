@@ -107,6 +107,9 @@ main(int argc, char *argv[])
 			XFlush(dpy);
 		}
 
+		if (DBG)
+			exit(0);
+
 		if (!done) {
 			if (clock_gettime(CLOCK_MONOTONIC, &current) < 0) {
 				die("clock_gettime:");
