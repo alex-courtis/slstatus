@@ -70,6 +70,10 @@ static const char unknown_str[] = "n/a";
  * tmp_perc_gt         /tmp /run percentage used       minimum percentage
  */
 static const struct arg args[] = {
+#if defined(HOST_tinygod)
+	{ vpn_state,			"%s",		"vpn0" },
+#endif
+
 #if defined(HOST_gigantor)
 	{ battery_summary,		"%s",		"BAT0" },
 	{ vpn_state,			"%s",		"vpn0" },

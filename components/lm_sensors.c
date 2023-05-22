@@ -32,20 +32,14 @@ typedef struct {
 	int amdgpuPowerAverage;
 	int k10tempTdie;
 	int thinkpadFan;
-	bool thinkpadFanOn;
 	int dellFan;
-	bool dellFanOn;
 	int coreTemp;
 	int asusWmiFanCpu;
-	bool asusWmiFanCpuOn;
 	int asusWmiFanCpuOpt;
-	bool asusWmiFanCpuOptOn;
 	int asusWmiFanChassis1;
-	bool asusWmiFanChassis1On;
 	int asusWmiFanChassis2;
-	bool asusWmiFanChassis2On;
 	int asusWmiWaterPump;
-	bool asusWmiWaterPumpOn;
+	bool blinkOn;
 } Sts;
 
 Sts sts = { 0 };
@@ -235,32 +229,34 @@ const char *render(const bool amdgpu) {
 	if (sts.k10tempTdie)
 		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdie);
 
+	sts.blinkOn = !sts.blinkOn;
+
 	if (sts.asusWmiFanCpu > ASUS_WMI_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanCpuOn = !sts.asusWmiFanCpuOn) ? "CPU" : "   ", sts.asusWmiFanCpu);
+		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "CPU" : "   ", sts.asusWmiFanCpu);
 	}
 
 	if (sts.asusWmiFanCpuOpt > ASUS_WMI_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanCpuOptOn = !sts.asusWmiFanCpuOptOn) ? "OPT" : "   ", sts.asusWmiFanCpuOpt);
+		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "OPT" : "   ", sts.asusWmiFanCpuOpt);
 	}
 
 	if (sts.asusWmiFanChassis1 > ASUS_WMI_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanChassis1On = !sts.asusWmiFanChassis1On) ? "Chas1" : "     ", sts.asusWmiFanChassis1);
+		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Chas1" : "     ", sts.asusWmiFanChassis1);
 	}
 
 	if (sts.asusWmiFanChassis2 > ASUS_WMI_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiFanChassis2On = !sts.asusWmiFanChassis2On) ? "Chas2" : "     ", sts.asusWmiFanChassis2);
+		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Chas2" : "     ", sts.asusWmiFanChassis2);
 	}
 
 	if (sts.asusWmiWaterPump > ASUS_WMI_WATER_PUMP_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.asusWmiWaterPumpOn = !sts.asusWmiWaterPumpOn) ? "Pump" : "    ", sts.asusWmiWaterPump);
+		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Pump" : "    ", sts.asusWmiWaterPump);
 	}
 
 	if (sts.thinkpadFan > THINKPAD_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.thinkpadFanOn = !sts.thinkpadFanOn) ? "Fan" : "   ", sts.thinkpadFan);
+		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Fan" : "   ", sts.thinkpadFan);
 	}
 
 	if (sts.dellFan > THINKPAD_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", (sts.dellFanOn = !sts.dellFanOn) ? "Fan" : "   ", sts.dellFan);
+		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Fan" : "   ", sts.dellFan);
 	}
 
 	return buf;
