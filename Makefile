@@ -37,7 +37,7 @@ all: slstatus tags
 tags: $(wildcard *.h *.c components/*.h components/*.c)
 	ctags-c $(CFLAGS) $(CPPFLAGS) --project-src $(^)
 
-$(COM:=.o): config.mk $(REQ:=.h)
+$(COM:=.o): config.mk $(REQ:=.h) slstatus.h
 slstatus.o: slstatus.c slstatus.h arg.h config.h config.mk $(REQ:=.h)
 
 .c.o:
