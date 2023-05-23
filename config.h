@@ -95,5 +95,5 @@ static const struct arg args[] = {
 	{ ram_perc,				"│ %s%% ",	NULL },
 	{ swap_perc,			"│ %s%% ",	NULL },
 	{ load_avg,				"│ %s ",	NULL },
-	{ datetime,				"│ %s",		"%a %d %b %H:%M:%S" },
+	{ datetime,				"│ %s ",	"%a %d %b %H:%M:%S" },
 };
