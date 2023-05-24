@@ -100,11 +100,11 @@
 
 		// only print missing
 		if (strcmp(id, "") == 0) {
-			snprintf(buf, sizeof(buf), "%s ", interface);
+			snprintf(buf, sizeof(buf), "%s", interface);
 			if ((show = !show))
 				for (char *c = buf; *c != '\0'; c++)
 					*c = ' ';
-			return bprintf("│ %s", buf);
+			return bprintf("│ %s 󰖪 ", buf);
 		} else {
 			show = true;
 			return "";
