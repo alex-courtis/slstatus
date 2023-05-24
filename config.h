@@ -71,6 +71,10 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 
+#if defined(HOST_emperor)
+	{ file_message,			"%s",		"/tmp/rival.battery" },
+#endif
+
 #if defined(HOST_duke)
 	{ wifi_essid,			"%s",		"wlp0s20f3" },
 #elif defined(HOST_gigantor)
