@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 #include <ifaddrs.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -70,6 +71,9 @@
 	const char *
 	wifi_essid(const char *interface)
 	{
+		static char buf[32];
+		static bool show = true;
+
 		static char id[IW_ESSID_MAX_SIZE+1];
 		int sockfd;
 		struct iwreq wreq;
@@ -96,8 +100,13 @@
 
 		// only print missing
 		if (strcmp(id, "") == 0) {
-			return bprintf("│ %s disconnected ", interface);
+			snprintf(buf, sizeof(buf), "%s ", interface);
+			if ((show = !show))
+				for (char *c = buf; *c != '\0'; c++)
+					*c = ' ';
+			return bprintf("│ %s", buf);
 		} else {
+			show = true;
 			return "";
 		}
 	}
