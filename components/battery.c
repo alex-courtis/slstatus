@@ -53,17 +53,19 @@
 			char *state;
 			char *symbol;
 		} map[] = {
-			{ "Charging",    "+" },
-			{ "Discharging", "-" },
+			{ "Charging",     "C" },
+			{ "Discharging",  "D" },
+			{ "Full",         "F" },
+			{ "Not charging", "N" },
 		};
 		size_t i;
-		char path[PATH_MAX], state[12];
+		char path[PATH_MAX], state[20];
 
 		if (esnprintf(path, sizeof(path),
 		              "/sys/class/power_supply/%s/status", bat) < 0) {
 			return NULL;
 		}
-		if (pscanf(path, "%12s", state) != 1) {
+		if (pscanf(path, "%[^\n]", state) != 1) {
 			return NULL;
 		}
 
@@ -126,11 +128,11 @@
 	const char *
 	battery_summary(const char *bat)
 	{
-		static char b[1024];
-		static char out[1028];
-		static bool on = false;
+		static char bperc[16];
+		static char bremaining[16];
+		static char buf[1028];
 
-		char *bp = b;
+		static bool show = false;
 
 		const char *state = battery_state(bat);
 		if (!state)
@@ -141,28 +143,48 @@
 		if (sscanf(battery_perc(bat), "%d", &perc) != 1)
 			return "";
 
-		if (st == '+' && perc == 100)
+		if (perc >= 100)
 			return "";
 
-		bp += sprintf(bp, "%d%% %c ", perc, st);
+		sprintf(bperc, "%d%% ", perc);
 
 		const char *remaining = battery_remaining(bat);
 		if (remaining && strlen(remaining) > 0)
-			bp += sprintf(bp, "%s ", remaining);
-
-		if (perc < PERC_CRITICAL && st != '+')
-			on = !on;
+			sprintf(bremaining, "%s ", remaining);
 		else
-			on = true;
+			*bremaining = '\0';
 
-		if (!on) {
-			for (char *zp = b; zp < bp; zp++) {
-				*zp = ' ';
-			}
+		if (perc < PERC_CRITICAL && st != 'C')
+			show = !show;
+		else
+			show = true;
+
+		if (!show) {
+			for (char *c = bperc; *c != '\0'; c++)
+				*c = ' ';
+			for (char *c = bremaining; *c != '\0'; c++)
+				*c = ' ';
 		}
 
-		sprintf(out, "│ %s", b);
-		return out;
+		switch (st) {
+			case 'C':
+				sprintf(buf, "│ %s↑ %s", bperc, bremaining);
+				break;
+			case 'D':
+				sprintf(buf, "│ %s↓ %s", bperc, bremaining);
+				break;
+			case 'N':
+				sprintf(buf, "│ %s↕ %s", bperc, bremaining);
+				break;
+			case 'F':
+				sprintf(buf, "| %s", bperc);
+				break;
+			default:
+				sprintf(buf, "│ %s? %s", bperc, bremaining);
+				break;
+		}
+
+		return buf;
 	}
 #elif defined(__OpenBSD__)
 	#include <fcntl.h>

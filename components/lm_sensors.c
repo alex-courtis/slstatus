@@ -211,7 +211,7 @@ void collect() {
 /* render max stats as a string with a trailing newline */
 /* static buffer is returned, do not free */
 const char *render(const bool amdgpu) {
-	static char buf[128];
+	static char buf[1024];
 
 	char *pbuf = buf;
 
