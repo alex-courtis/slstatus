@@ -10,7 +10,8 @@
 
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
 
-#define ASUS_WMI_FAN_THRESHOLD 800
+#define ASUS_WMI_CPU_FAN_THRESHOLD 1000
+#define ASUS_WMI_CHAS_FAN_THRESHOLD 1500
 #define ASUS_WMI_WATER_PUMP_THRESHOLD 3000
 
 #define THINKPAD_FAN_THRESHOLD 1200
@@ -231,19 +232,19 @@ const char *render(const bool amdgpu) {
 
 	sts.blinkOn = !sts.blinkOn;
 
-	if (sts.asusWmiFanCpu > ASUS_WMI_FAN_THRESHOLD) {
+	if (sts.asusWmiFanCpu > ASUS_WMI_CPU_FAN_THRESHOLD) {
 		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "CPU" : "   ", sts.asusWmiFanCpu);
 	}
 
-	if (sts.asusWmiFanCpuOpt > ASUS_WMI_FAN_THRESHOLD) {
+	if (sts.asusWmiFanCpuOpt > ASUS_WMI_CPU_FAN_THRESHOLD) {
 		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "OPT" : "   ", sts.asusWmiFanCpuOpt);
 	}
 
-	if (sts.asusWmiFanChassis1 > ASUS_WMI_FAN_THRESHOLD) {
+	if (sts.asusWmiFanChassis1 > ASUS_WMI_CHAS_FAN_THRESHOLD) {
 		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Chas1" : "     ", sts.asusWmiFanChassis1);
 	}
 
-	if (sts.asusWmiFanChassis2 > ASUS_WMI_FAN_THRESHOLD) {
+	if (sts.asusWmiFanChassis2 > ASUS_WMI_CHAS_FAN_THRESHOLD) {
 		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Chas2" : "     ", sts.asusWmiFanChassis2);
 	}
 
