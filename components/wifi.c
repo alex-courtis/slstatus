@@ -104,7 +104,7 @@
 			if ((show = !show))
 				for (char *c = buf; *c != '\0'; c++)
 					*c = ' ';
-			return bprintf("│ %s 󰖪 ", buf);
+			return bprintf("│ 󰖪 %s ", buf);
 		} else {
 			show = true;
 			return "";
