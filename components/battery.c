@@ -143,7 +143,7 @@
 		if (sscanf(battery_perc(bat), "%d", &perc) != 1)
 			return "";
 
-		if (perc >= 100)
+		if (perc >= 100 && (st == 'C' || st == 'N'))
 			return "";
 
 		sprintf(bperc, "%d%% ", perc);
