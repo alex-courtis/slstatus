@@ -19,7 +19,7 @@ file_message(const char *path)
 
 		if (fgets(b, sizeof(b), fp)) {
 			*(strchrnul(b, '\n')) = '\0';
-			bprintf("│ %s ", b);
+			bprintf("%s ", b);
 		}
 
 		fclose(fp);

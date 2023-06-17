@@ -107,7 +107,10 @@ void collect() {
 				if (!(subfeature->flags & SENSORS_MODE_R))
 					continue;
 
-				dbg("  %s\n", subfeature->name);
+				if (DBG) {
+					sensors_get_value(chip_name, subfeature->number, &value);
+					dbg("  %s = %g\n", subfeature->name, value);
+				}
 
 				switch(chip) {
 					case thinkpad:
@@ -217,18 +220,12 @@ const char *render(const bool amdgpu) {
 	char *pbuf = buf;
 
 	if (amdgpu) {
-		if (sts.amdgpuPowerAverage)
-			pbuf += sprintf(pbuf, "│ %iW ", sts.amdgpuPowerAverage);
-
 		if (sts.amdgpuTempEdge)
-			pbuf += sprintf(pbuf, "%i°C ", sts.amdgpuTempEdge);
+			pbuf += sprintf(pbuf, "│ %i°C ", sts.amdgpuTempEdge);
+
+		if (sts.amdgpuPowerAverage)
+			pbuf += sprintf(pbuf, "%iW ", sts.amdgpuPowerAverage);
 	}
-
-	if (sts.coreTemp)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTemp);
-
-	if (sts.k10tempTdie)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdie);
 
 	sts.blinkOn = !sts.blinkOn;
 
@@ -259,6 +256,12 @@ const char *render(const bool amdgpu) {
 	if (sts.dellFan > THINKPAD_FAN_THRESHOLD) {
 		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Fan" : "   ", sts.dellFan);
 	}
+
+	if (sts.coreTemp)
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTemp);
+
+	if (sts.k10tempTdie)
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdie);
 
 	return buf;
 }
