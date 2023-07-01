@@ -93,7 +93,6 @@ static const struct arg args[] = {
 
 #if defined(HOST_emperor)
 	{ lm_sensors,			"%s",		"amdgpu" },
-	{ file_message,			"%s",		"/tmp/cpu.power" },
 #else
 	{ lm_sensors,			"%s",		"" },
 #endif
