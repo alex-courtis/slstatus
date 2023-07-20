@@ -15,6 +15,7 @@
 #define ASUS_WMI_WATER_PUMP_THRESHOLD 3000
 
 #define THINKPAD_FAN_THRESHOLD 1200
+#define DELL_FAN_THRESHOLD 2600
 
 void dbg(const char *restrict __format, ...) {
 	if (!DBG)
@@ -253,7 +254,7 @@ const char *render(const bool amdgpu) {
 		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Fan" : "   ", sts.thinkpadFan);
 	}
 
-	if (sts.dellFan > THINKPAD_FAN_THRESHOLD) {
+	if (sts.dellFan > DELL_FAN_THRESHOLD) {
 		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Fan" : "   ", sts.dellFan);
 	}
 
