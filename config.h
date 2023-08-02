@@ -81,13 +81,17 @@ static const struct arg args[] = {
 	{ wifi_essid,			"%s",		"wlp59s0" },
 #endif
 
-#if defined(HOST_duke) || defined(HOST_gigantor)
+#if defined(HOST_duke)
+	{ battery_summary,		"%s",		"BAT0" },
+#elif defined(HOST_gigantor)
 	{ battery_summary,		"%s",		"BAT0" },
 #endif
 
 	{ pa,					"%s",		NULL },
 
-#if defined(HOST_tinygod) || defined(HOST_gigantor)
+#if defined(HOST_tinygod)
+	{ vpn_state,			"%s",		"vpn0" },
+#elif defined(HOST_gigantor)
 	{ vpn_state,			"%s",		"vpn0" },
 #endif
 
