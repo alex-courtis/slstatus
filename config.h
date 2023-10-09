@@ -101,7 +101,7 @@ static const struct arg args[] = {
 	{ lm_sensors,			"%s",		"" },
 #endif
 
-	{ tmp_perc_gt,			"%s",		"15" },
+	{ tmp_perc_gt,			"%s",		"50" },
 	{ ram_perc,				"│ %s%% ",	NULL },
 	{ swap_perc,			"│ %s%% ",	NULL },
 	{ load_avg,				"│ %s ",	NULL },
