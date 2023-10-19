@@ -177,7 +177,7 @@
 				sprintf(buf, "│ %s↕ %s", bperc, bremaining);
 				break;
 			case 'F':
-				sprintf(buf, "| %s", bperc);
+				sprintf(buf, "│ %s", bperc);
 				break;
 			default:
 				sprintf(buf, "│ %s? %s", bperc, bremaining);
