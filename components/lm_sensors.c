@@ -14,7 +14,7 @@
 #define ASUS_WMI_CHAS_FAN_THRESHOLD 1500
 #define ASUS_WMI_WATER_PUMP_THRESHOLD 3000
 
-#define THINKPAD_FAN_THRESHOLD 2000
+#define THINKPAD_FAN_THRESHOLD 3500
 #define DELL_FAN_THRESHOLD 3500
 
 void dbg(const char *restrict __format, ...) {
