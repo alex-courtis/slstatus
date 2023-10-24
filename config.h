@@ -91,6 +91,8 @@ static const struct arg args[] = {
 
 #if defined(HOST_tinygod)
 	{ vpn_state,			"%s",		"vpn0" },
+#elif defined(HOST_duke)
+	{ vpn_state,			"%s",		"vpn0" },
 #elif defined(HOST_gigantor)
 	{ vpn_state,			"%s",		"vpn0" },
 #endif
