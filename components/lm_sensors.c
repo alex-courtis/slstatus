@@ -17,6 +17,9 @@
 #define THINKPAD_FAN_THRESHOLD 3500
 #define DELL_FAN_THRESHOLD 3500
 
+// disabmiguate integrated
+#define EMP_AMDGPU_NAME "amdgpu-pci-0300"
+
 void dbg(const char *restrict __format, ...) {
 	if (!DBG)
 		return;
@@ -33,6 +36,7 @@ typedef struct {
 	int amdgpuTempEdge;
 	int amdgpuPowerAverage;
 	int k10tempTdie;
+	int k10tempTccd2;
 	int thinkpadFan;
 	int dellFan;
 	int coreTemp;
@@ -50,6 +54,7 @@ void zero_sts() {
 	sts.amdgpuPowerAverage = 0;
 	sts.amdgpuTempEdge = 0;
 	sts.k10tempTdie = 0;
+	sts.k10tempTccd2 = 0;
 	sts.thinkpadFan = 0;
 	sts.dellFan = 0;
 	sts.coreTemp = 0;
@@ -57,6 +62,7 @@ void zero_sts() {
 
 /* discover and collect interesting sensor stats */
 void collect() {
+	static char chip_name_print[256];
 
 	const sensors_chip_name *chip_name;
 	int chip_nr;
@@ -77,10 +83,11 @@ void collect() {
 	chip_nr = 0;
 	while ((chip_name = sensors_get_detected_chips(NULL, &chip_nr))) {
 
-		dbg("%s\n", chip_name->prefix);
+		sensors_snprintf_chip_name(chip_name_print, sizeof(chip_name_print), chip_name);
+		dbg("%s %s\n", chip_name->prefix, chip_name_print);
 
 		/* only interested in known chips */
-		if (strcmp(chip_name->prefix, "amdgpu") == 0)
+		if ((strcmp(chip_name->prefix, "amdgpu") == 0) && (strcmp(chip_name_print, EMP_AMDGPU_NAME) == 0))
 			chip = amdgpu;
 		else if (strcmp(chip_name->prefix, "k10temp") == 0)
 			chip = k10Temp;
@@ -150,6 +157,10 @@ void collect() {
 								if (strcmp(label, "Tdie") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.k10tempTdie = MAX(sts.k10tempTdie, (int)(value + 0.5));
+								// shown by the motherboard 7 segment
+								} else if (strcmp(label, "Tccd2") == 0) {
+									sensors_get_value(chip_name, subfeature->number, &value);
+									sts.k10tempTccd2 = MAX(sts.k10tempTccd2, (int)(value + 0.5));
 								}
 								break;
 							default:
@@ -269,6 +280,9 @@ const char *render(const bool amdgpu) {
 
 	if (sts.k10tempTdie)
 		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdie);
+
+	if (sts.k10tempTccd2)
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTccd2);
 
 	return buf;
 }
