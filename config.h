@@ -73,31 +73,23 @@ static const struct arg args[] = {
 
 #if defined(HOST_emperor)
 	{ file_message,			"%s",		"/tmp/rival.battery" },
+#elif defined(HOST_king)
+	{ file_message,			"%s",		"/tmp/rival.battery" },
 #endif
 
 #if defined(HOST_duke)
 	{ wifi_essid,			"%s",		"wlp0s20f3" },
-#elif defined(HOST_gigantor)
-	{ wifi_essid,			"%s",		"wlp0s20f3" },
 #endif
 
 #if defined(HOST_duke)
-	{ battery_summary,		"%s",		"BAT0" },
-#elif defined(HOST_gigantor)
 	{ battery_summary,		"%s",		"BAT0" },
 #endif
 
 	{ pa,					"%s",		NULL },
 
-#if defined(HOST_tinygod)
-	{ vpn_state,			"%s",		"vpn0" },
-#elif defined(HOST_duke)
-	{ vpn_state,			"%s",		"vpn0" },
-#elif defined(HOST_gigantor)
-	{ vpn_state,			"%s",		"vpn0" },
-#endif
-
 #if defined(HOST_emperor)
+	{ lm_sensors,			"%s",		"amdgpu" },
+#elif defined(HOST_king)
 	{ lm_sensors,			"%s",		"amdgpu" },
 #else
 	{ lm_sensors,			"%s",		"" },
