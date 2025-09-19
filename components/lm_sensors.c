@@ -18,7 +18,7 @@
 #define DELL_FAN_THRESHOLD 3500
 
 // disabmiguate integrated
-#define EMP_AMDGPU_NAME "amdgpu-pci-0300"
+#define EXT_AMDGPU_NAME "amdgpu-pci-0300"
 
 void dbg(const char *restrict __format, ...) {
 	if (!DBG)
@@ -34,7 +34,9 @@ enum Chip { k10Temp, amdgpu, thinkpad, coretemp, dell, asus_wmi };
 
 typedef struct {
 	int amdgpuTempEdge;
+	int amdgpuTempJunction;
 	int amdgpuPowerAverage;
+	int k10tempTctl;
 	int k10tempTdie;
 	int k10tempTccd2;
 	int thinkpadFan;
@@ -87,7 +89,7 @@ void collect() {
 		dbg("%s %s\n", chip_name->prefix, chip_name_print);
 
 		/* only interested in known chips */
-		if ((strcmp(chip_name->prefix, "amdgpu") == 0) && (strcmp(chip_name_print, EMP_AMDGPU_NAME) == 0))
+		if ((strcmp(chip_name->prefix, "amdgpu") == 0) && (strcmp(chip_name_print, EXT_AMDGPU_NAME) == 0))
 			chip = amdgpu;
 		else if (strcmp(chip_name->prefix, "k10temp") == 0)
 			chip = k10Temp;
@@ -117,7 +119,7 @@ void collect() {
 
 				if (DBG) {
 					sensors_get_value(chip_name, subfeature->number, &value);
-					dbg("  %s = %g\n", subfeature->name, value);
+					dbg("  %s (%d) = %g\n", subfeature->name, subfeature->type, value);
 				}
 
 				switch(chip) {
@@ -140,6 +142,9 @@ void collect() {
 								if (strcmp(label, "edge") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.amdgpuTempEdge = MAX(sts.amdgpuTempEdge, (int)(value + 0.5));
+								} else if (strcmp(label, "junction") == 0) {
+									sensors_get_value(chip_name, subfeature->number, &value);
+									sts.amdgpuTempJunction = MAX(sts.amdgpuTempJunction, (int)(value + 0.5));
 								}
 								break;
 							case SENSORS_SUBFEATURE_POWER_AVERAGE:
@@ -153,8 +158,12 @@ void collect() {
 					case k10Temp:
 						switch (subfeature->type) {
 							case SENSORS_SUBFEATURE_TEMP_INPUT:
-								// Tctl is offset +27 degrees, Tdie is derived from junction
-								if (strcmp(label, "Tdie") == 0) {
+								// Tctl is sometimes offset by +27 degrees
+								if (strcmp(label, "Tctl") == 0) {
+									sensors_get_value(chip_name, subfeature->number, &value);
+									sts.k10tempTctl = MAX(sts.k10tempTctl, (int)(value + 0.5));
+								// Tdie is derived from junction
+								} else if (strcmp(label, "Tdie") == 0) {
 									sensors_get_value(chip_name, subfeature->number, &value);
 									sts.k10tempTdie = MAX(sts.k10tempTdie, (int)(value + 0.5));
 								// shown by the motherboard 7 segment
@@ -232,8 +241,8 @@ const char *render(const bool amdgpu) {
 	char *pbuf = buf;
 
 	if (amdgpu) {
-		if (sts.amdgpuTempEdge)
-			pbuf += sprintf(pbuf, "│ %i°C ", sts.amdgpuTempEdge);
+		if (sts.amdgpuTempJunction)
+			pbuf += sprintf(pbuf, "│ %i°C ", sts.amdgpuTempJunction);
 
 		if (sts.amdgpuPowerAverage)
 			pbuf += sprintf(pbuf, "%iW ", sts.amdgpuPowerAverage);
@@ -278,11 +287,8 @@ const char *render(const bool amdgpu) {
 	if (sts.coreTemp)
 		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTemp);
 
-	if (sts.k10tempTdie)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTdie);
-
-	if (sts.k10tempTccd2)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTccd2);
+	if (sts.k10tempTctl)
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTctl);
 
 	return buf;
 }

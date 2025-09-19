@@ -71,9 +71,7 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 
-#if defined(HOST_emperor)
-	{ file_message,			"%s",		"/tmp/rival.battery" },
-#elif defined(HOST_king)
+#if defined(HOST_king)
 	{ file_message,			"%s",		"/tmp/rival.battery" },
 #endif
 
@@ -87,9 +85,7 @@ static const struct arg args[] = {
 
 	{ pa,					"%s",		NULL },
 
-#if defined(HOST_emperor)
-	{ lm_sensors,			"%s",		"amdgpu" },
-#elif defined(HOST_king)
+#if defined(HOST_king)
 	{ lm_sensors,			"%s",		"amdgpu" },
 #else
 	{ lm_sensors,			"%s",		"" },
