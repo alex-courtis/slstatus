@@ -93,8 +93,13 @@ static const struct arg args[] = {
 #endif
 
 	{ tmp_perc_gt,			"%s",		"50" },
+#if defined(HOST_king)
 	{ ram_perc,				"│ M %s%% ",NULL },
 	{ swap_perc,			"│ S %s%% ",NULL },
+#else
+	{ ram_perc,				"│ %s%% ",NULL },
+	{ swap_perc,			"│ %s%% ",NULL },
+#endif
 	{ load_avg,				"│ %s ",	NULL },
 	// { datetime,				"│ %s ",	"%a %d %b %H:%M:%S" },
 

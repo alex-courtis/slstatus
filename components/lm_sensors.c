@@ -285,10 +285,10 @@ const char *render(const bool amdgpu) {
 	}
 
 	if (sts.coreTemp)
-		pbuf += sprintf(pbuf, "│ C %i°C ", sts.coreTemp);
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTemp);
 
 	if (sts.k10tempTctl)
-		pbuf += sprintf(pbuf, "│ C %i°C ", sts.k10tempTctl);
+		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTctl);
 
 	return buf;
 }
