@@ -242,7 +242,7 @@ const char *render(const bool amdgpu) {
 
 	if (amdgpu) {
 		if (sts.amdgpuTempJunction)
-			pbuf += sprintf(pbuf, "│ %i°C ", sts.amdgpuTempJunction);
+			pbuf += sprintf(pbuf, "│ G %i°C ", sts.amdgpuTempJunction);
 
 		if (sts.amdgpuPowerAverage)
 			pbuf += sprintf(pbuf, "%iW ", sts.amdgpuPowerAverage);
@@ -285,10 +285,10 @@ const char *render(const bool amdgpu) {
 	}
 
 	if (sts.coreTemp)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.coreTemp);
+		pbuf += sprintf(pbuf, "│ C %i°C ", sts.coreTemp);
 
 	if (sts.k10tempTctl)
-		pbuf += sprintf(pbuf, "│ %i°C ", sts.k10tempTctl);
+		pbuf += sprintf(pbuf, "│ C %i°C ", sts.k10tempTctl);
 
 	return buf;
 }

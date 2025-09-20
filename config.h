@@ -72,7 +72,7 @@ static const char unknown_str[] = "n/a";
 static const struct arg args[] = {
 
 #if defined(HOST_king)
-	{ file_message,			"%s",		"/tmp/rival.battery" },
+	{ file_message,			"%s ",		"/tmp/rival.battery" },
 #endif
 
 #if defined(HOST_duke)
@@ -87,13 +87,14 @@ static const struct arg args[] = {
 
 #if defined(HOST_king)
 	{ lm_sensors,			"%s",		"amdgpu" },
+	{ file_message,			"| V %s°C ","/run/ipmi-CPU_VRM0" },
 #else
 	{ lm_sensors,			"%s",		"" },
 #endif
 
 	{ tmp_perc_gt,			"%s",		"50" },
-	{ ram_perc,				"│ %s%% ",	NULL },
-	{ swap_perc,			"│ %s%% ",	NULL },
+	{ ram_perc,				"│ M %s%% ",NULL },
+	{ swap_perc,			"│ S %s%% ",NULL },
 	{ load_avg,				"│ %s ",	NULL },
 	// { datetime,				"│ %s ",	"%a %d %b %H:%M:%S" },
 
