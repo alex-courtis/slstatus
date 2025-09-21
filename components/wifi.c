@@ -241,11 +241,11 @@
 				if (hdr.nlmsg_type == NLMSG_DONE) {
 					if (strength == -1) {
 						show = !show;
-						return bprintf("|  %s  ", show ? "󱚵" : " ");
+						return bprintf("│  %s  ", show ? "󱚵" : " ");
 					} else if (strength >= 90) {
 						return "";
 					} else {
-						return bprintf("| 󰖩 %d%% ", strength);
+						return bprintf("│ 󰖩 %d%% ", strength);
 					}
 				}
 			}

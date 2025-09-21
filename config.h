@@ -91,7 +91,7 @@ static const struct arg args[] = {
 
 #if defined(HOST_king)
 	{ lm_sensors,			"%s",		"amdgpu" },
-	{ file_message,			"| V %s°C ","/run/ipmi-CPU_VRM0" },
+	{ file_message,			"│ V %s°C ","/run/ipmi-CPU_VRM0" },
 #else
 	{ lm_sensors,			"%s",		"" },
 #endif
