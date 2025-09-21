@@ -124,7 +124,7 @@
 		return "";
 	}
 
-	/* empty when charging at 100% */
+	/* empty when charging above 95% */
 	const char *
 	battery_summary(const char *bat)
 	{
@@ -143,7 +143,7 @@
 		if (sscanf(battery_perc(bat), "%d", &perc) != 1)
 			return "";
 
-		if (perc >= 100 && (st == 'C' || st == 'N'))
+		if (perc >= 95 && (st == 'C' || st == 'N'))
 			return "";
 
 		sprintf(bperc, "%d%% ", perc);
