@@ -77,10 +77,14 @@ static const struct arg args[] = {
 
 #if defined(HOST_duke)
 	{ wifi_essid,			"%s",		"wlp0s20f3" },
+#elif defined(HOST_earl)
+	{ wifi_perc,			"| 󰖩 %s%% ",	"wlp192s0" },
 #endif
 
 #if defined(HOST_duke)
 	{ battery_summary,		"%s",		"BAT0" },
+#elif defined(HOST_earl)
+	{ battery_summary,		"%s",		"BAT1" },
 #endif
 
 	{ pa,					"%s",		NULL },
