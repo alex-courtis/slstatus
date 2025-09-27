@@ -174,7 +174,7 @@
 		return p;
 	}
 
-	/* empty when above 90% */
+	/* empty when above 80% */
 	const char *
 	wifi_perc(const char *interface)
 	{
@@ -242,7 +242,7 @@
 					if (strength == -1) {
 						show = !show;
 						return bprintf("│  %s  ", show ? "󱚵" : " ");
-					} else if (strength >= 90) {
+					} else if (strength >= 80) {
 						return "";
 					} else {
 						return bprintf("│ 󰖩 %d%% ", strength);
