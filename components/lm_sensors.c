@@ -10,12 +10,7 @@
 
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
 
-#define ASUS_WMI_CPU_FAN_THRESHOLD 1000
-#define ASUS_WMI_CHAS_FAN_THRESHOLD 1500
-#define ASUS_WMI_WATER_PUMP_THRESHOLD 3000
-
 #define THINKPAD_FAN_THRESHOLD 3500
-#define DELL_FAN_THRESHOLD 3500
 
 // disabmiguate integrated
 #define EXT_AMDGPU_NAME "amdgpu-pci-0300"
@@ -30,7 +25,7 @@ void dbg(const char *restrict __format, ...) {
 	va_end(args);
 }
 
-enum Chip { k10Temp, amdgpu, thinkpad, coretemp, dell, asus_wmi };
+enum Chip { k10Temp, amdgpu, thinkpad, coretemp, };
 
 typedef struct {
 	int amdgpuTempEdge;
@@ -40,25 +35,20 @@ typedef struct {
 	int k10tempTdie;
 	int k10tempTccd2;
 	int thinkpadFan;
-	int dellFan;
 	int coreTemp;
-	int asusWmiFanCpu;
-	int asusWmiFanCpuOpt;
-	int asusWmiFanChassis1;
-	int asusWmiFanChassis2;
-	int asusWmiWaterPump;
 	bool blinkOn;
 } Sts;
 
 Sts sts = { 0 };
 
 void zero_sts() {
-	sts.amdgpuPowerAverage = 0;
 	sts.amdgpuTempEdge = 0;
+	sts.amdgpuTempJunction = 0;
+	sts.amdgpuPowerAverage = 0;
+	sts.k10tempTctl = 0;
 	sts.k10tempTdie = 0;
 	sts.k10tempTccd2 = 0;
 	sts.thinkpadFan = 0;
-	sts.dellFan = 0;
 	sts.coreTemp = 0;
 }
 
@@ -97,10 +87,6 @@ void collect() {
 			chip = thinkpad;
 		else if (strcmp(chip_name->prefix, "coretemp") == 0)
 			chip = coretemp;
-		else if (strcmp(chip_name->prefix, "dell_smm") == 0)
-			chip = dell;
-		else if (strcmp(chip_name->prefix, "asus_wmi_sensors") == 0)
-			chip = asus_wmi;
 		else
 			continue;
 
@@ -186,41 +172,6 @@ void collect() {
 							break;
 						}
 						break;
-					case dell:
-						switch (subfeature->type) {
-						case SENSORS_SUBFEATURE_FAN_INPUT:
-							sensors_get_value(chip_name, subfeature->number, &value);
-							sts.dellFan = MAX(sts.dellFan, (int)(value + 0.5));
-							break;
-						default:
-							break;
-						}
-						break;
-					case asus_wmi:
-						switch (subfeature->type) {
-						case SENSORS_SUBFEATURE_FAN_INPUT:
-							if (strcmp(label, "CPU Fan") == 0) {
-								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.asusWmiFanCpu = (int)(value + 0.5);
-							} else if (strcmp(label, "CPU OPT") == 0) {
-								// this one is too slow
-								// sensors_get_value(chip_name, subfeature->number, &value);
-								// sts.asusWmiFanCpuOpt = (int)(value + 0.5);
-							} else if (strcmp(label, "Chassis Fan 1") == 0) {
-								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.asusWmiFanChassis1 = (int)(value + 0.5);
-							} else if (strcmp(label, "Chassis Fan 2") == 0) {
-								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.asusWmiFanChassis2 = (int)(value + 0.5);
-							} else if (strcmp(label, "Water Pump 1") == 0) {
-								sensors_get_value(chip_name, subfeature->number, &value);
-								sts.asusWmiWaterPump = (int)(value + 0.5);
-							}
-							break;
-						default:
-							break;
-						}
-						break;
 				}
 			}
 			if (label) {
@@ -250,36 +201,9 @@ const char *render(const bool amdgpu) {
 
 	sts.blinkOn = !sts.blinkOn;
 
-	if (sts.asusWmiFanCpu > ASUS_WMI_CPU_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "CPU" : "   ", sts.asusWmiFanCpu);
-	}
-
-	if (sts.asusWmiFanCpuOpt > ASUS_WMI_CPU_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "OPT" : "   ", sts.asusWmiFanCpuOpt);
-	}
-
-	if (sts.asusWmiFanChassis1 > ASUS_WMI_CHAS_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Chas1" : "     ", sts.asusWmiFanChassis1);
-	}
-
-	if (sts.asusWmiFanChassis2 > ASUS_WMI_CHAS_FAN_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Chas2" : "     ", sts.asusWmiFanChassis2);
-	}
-
-	if (sts.asusWmiWaterPump > ASUS_WMI_WATER_PUMP_THRESHOLD) {
-		pbuf += sprintf(pbuf, "│ %s %iR ", sts.blinkOn ? "Pump" : "    ", sts.asusWmiWaterPump);
-	}
-
 	if (sts.thinkpadFan > THINKPAD_FAN_THRESHOLD) {
 		if (sts.blinkOn)
 			pbuf += sprintf(pbuf, "│ %iR ", sts.thinkpadFan);
-		else
-			pbuf += sprintf(pbuf, "│       ");
-	}
-
-	if (sts.dellFan > DELL_FAN_THRESHOLD) {
-		if (sts.blinkOn)
-			pbuf += sprintf(pbuf, "│ %iR ", sts.dellFan);
 		else
 			pbuf += sprintf(pbuf, "│       ");
 	}
