@@ -174,11 +174,10 @@
 		return p;
 	}
 
-	/* empty when above 80% */
 	const char *
 	wifi_perc(const char *interface)
 	{
-		int strength = -1;
+		int dBm = 0;
 		static bool show = false;
 		struct nlmsghdr hdr;
 		uint16_t fam = nl80211fam();
@@ -230,22 +229,29 @@
 				memcpy(&hdr, p, sizeof(hdr));
 				e = resp + r - p < hdr.nlmsg_len ? resp + r : p + hdr.nlmsg_len;
 
-				if (strength == -1 && hdr.nlmsg_len > NLMSG_HDRLEN+GENL_HDRLEN) {
+				if (!dBm && hdr.nlmsg_len > NLMSG_HDRLEN+GENL_HDRLEN) {
 					p += NLMSG_HDRLEN+GENL_HDRLEN;
 					p = findattr(NL80211_ATTR_STA_INFO, p, e, &len);
 					if (p)
 						p = findattr(NL80211_STA_INFO_SIGNAL_AVG, p, e, &len);
-					if (p && len == 1)
-						strength = RSSI_TO_PERC(*p);
+					if (p && len == 1) {
+						dBm = *p;
+					}
 				}
 				if (hdr.nlmsg_type == NLMSG_DONE) {
-					if (strength == -1) {
+					if (!dBm) {
 						show = !show;
 						return bprintf("│  %s  ", show ? "󱚵" : " ");
-					} else if (strength >= 80) {
-						return "";
+					} else if (dBm > -5) {
+						return bprintf("");
+					} else if (dBm > -70) {
+						return bprintf("│ 󰖩 %ddBm ", dBm);
 					} else {
-						return bprintf("│ 󰖩 %d%% ", strength);
+						show = !show;
+						if (show)
+							return bprintf("│ 󰖩 %ddBm ", dBm);
+						else
+							return bprintf("│ 󰖩        ");
 					}
 				}
 			}
