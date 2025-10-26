@@ -178,7 +178,7 @@
 	wifi_perc(const char *interface)
 	{
 		int dBm = 0;
-		static bool show = false;
+		static int show = 0;
 		struct nlmsghdr hdr;
 		uint16_t fam = nl80211fam();
 		ssize_t r;
