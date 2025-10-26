@@ -1,7 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 #include <string.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <sensors/sensors.h>
 
@@ -36,7 +35,7 @@ typedef struct {
 	int k10tempTccd2;
 	int thinkpadFan;
 	int coreTemp;
-	bool blinkOn;
+	int blinkOn;
 } Sts;
 
 Sts sts = { 0 };
@@ -186,7 +185,7 @@ void collect() {
 
 /* render max stats as a string with a trailing newline */
 /* static buffer is returned, do not free */
-const char *render(const bool amdgpu) {
+const char *render(const char *amdgpu) {
 	static char buf[1024];
 
 	char *pbuf = buf;
