@@ -87,7 +87,7 @@ static const struct arg args[] = {
 	{ battery_summary,		"%s",		"BAT1" },
 #endif
 
-	{ pa,					"%s",		NULL },
+	{ pa,					"%s",		0 },
 
 #if defined(HOST_king)
 	{ lm_sensors,			"%s",		"amdgpu" },
@@ -100,10 +100,10 @@ static const struct arg args[] = {
 
 	{ tmp_perc_gt,			"%s",		"50" },
 
-	{ ram_perc,				"│ %s%%",	NULL },
-	{ swap_perc,			" %s%% ",	NULL },
+	{ ram_perc,				"│ %s%%",	0 },
+	{ swap_perc,			" %s%% ",	0 },
 
-	{ load_avg,				"│ %s ",	NULL },
+	{ load_avg,				"│ %s ",	0 },
 	// { datetime,				"│ %s ",	"%a %d %b %H:%M:%S" },
 
 };

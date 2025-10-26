@@ -200,7 +200,7 @@ void *pa_loop(void *data) {
 	return NULL;
 }
 
-const char *pa(void) {
+const char *pa(const char *unused) {
 	static struct state s = { 0 };
 	static char b[1024];
 	static pthread_t pa_thread = 0;

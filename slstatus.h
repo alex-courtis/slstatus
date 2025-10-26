@@ -92,7 +92,7 @@ const char *wifi_perc(const char *interface);
 const char *lm_sensors(const char *opts);
 
 /* pa */
-const char *pa(void);
+const char *pa(const char *unused);
 
 /* net */
 const char *vpn_state(const char *interface);

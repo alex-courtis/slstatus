@@ -5,6 +5,7 @@
 #include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 
+#include "../slstatus.h"
 #include "../util.h"
 
 static int
@@ -14,19 +15,13 @@ valid_layout_or_variant(char *sym)
 	/* invalid symbols from xkb rules config */
 	static const char *invalid[] = { "evdev", "inet", "pc", "base" };
 
-	for (i = 0; i < LEN(invalid); i++) {
-		if (!strncmp(sym, invalid[i], strlen(invalid[i]))) {
+	for (i = 0; i < LEN(invalid); i++)
+		if (!strncmp(sym, invalid[i], strlen(invalid[i])))
 			return 0;
-		}
-	}
 
 	return 1;
 }
 
-/*
- * This one is tricky, as we receive a string like "pc+us(dvp)+us:2+inet(evdev)+group(shifts_toggle)+capslock(escape)"
- * There are more matching than there are groups, hence it exits early.
- */
 static char *
 get_layout(char *syms, int grp_num)
 {
@@ -34,8 +29,8 @@ get_layout(char *syms, int grp_num)
 	int grp;
 
 	layout = NULL;
-	tok = strtok(syms, "+:");
-	for (grp = 0; tok && grp <= grp_num; tok = strtok(NULL, "+:")) {
+	tok = strtok(syms, "+:_");
+	for (grp = 0; tok && grp <= grp_num; tok = strtok(NULL, "+:_")) {
 		if (!valid_layout_or_variant(tok)) {
 			continue;
 		} else if (strlen(tok) == 1 && isdigit(tok[0])) {
@@ -50,13 +45,13 @@ get_layout(char *syms, int grp_num)
 }
 
 const char *
-keymap(void)
+keymap(const char *unused)
 {
 	Display *dpy;
 	XkbDescRec *desc;
 	XkbStateRec state;
-	char *symbols, *layout;
-	unsigned int i, ngroups;
+	char *symbols;
+	const char *layout;
 
 	layout = NULL;
 
@@ -68,40 +63,24 @@ keymap(void)
 		warn("XkbAllocKeyboard: Failed to allocate keyboard");
 		goto end;
 	}
-	if (XkbGetNames(dpy, XkbSymbolsNameMask | XkbGroupNamesMask, desc)) {
+	if (XkbGetNames(dpy, XkbSymbolsNameMask, desc)) {
 		warn("XkbGetNames: Failed to retrieve key symbols");
 		goto end;
 	}
-
-	// count the number of groups i.e. layouts
-	ngroups = 0;
-	for (i = 0; i < XkbNumKbdGroups; i++) {
-		if (desc->names->groups[i]) {
-			ngroups++;
-		}
+	if (XkbGetState(dpy, XkbUseCoreKbd, &state)) {
+		warn("XkbGetState: Failed to retrieve keyboard state");
+		goto end;
 	}
-
-	// only display if there are multiple layouts
-	if (ngroups > 1) {
-		if (XkbGetState(dpy, XkbUseCoreKbd, &state)) {
-			warn("XkbGetState: Failed to retrieve keyboard state");
-			goto end;
-		}
-		if (!(symbols = XGetAtomName(dpy, desc->names->symbols))) {
-			warn("XGetAtomName: Failed to get atom name");
-			goto end;
-		}
-		layout = (char *) bprintf("%s   ", get_layout(symbols, state.group));
-		XFree(symbols);
-	} else {
-		layout = (char *) bprintf("");
+	if (!(symbols = XGetAtomName(dpy, desc->names->symbols))) {
+		warn("XGetAtomName: Failed to get atom name");
+		goto end;
 	}
-
+	layout = bprintf("%s", get_layout(symbols, state.group));
+	XFree(symbols);
 end:
-	XkbFreeKeyboard(desc, XkbSymbolsNameMask | XkbGroupNamesMask, 1);
-	if (XCloseDisplay(dpy)) {
+	XkbFreeKeyboard(desc, XkbSymbolsNameMask, 1);
+	if (XCloseDisplay(dpy))
 		warn("XCloseDisplay: Failed to close display");
-	}
 
 	return layout;
 }

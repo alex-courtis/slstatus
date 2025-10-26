@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <sys/statvfs.h>
 
+#include "../slstatus.h"
 #include "../util.h"
 
 const char *
@@ -31,7 +32,7 @@ disk_perc(const char *path)
 	}
 
 	return bprintf("%d", (int)(100 *
-	               (1.0f - ((float)fs.f_bavail / (float)fs.f_blocks))));
+	               (1 - ((double)fs.f_bavail / (double)fs.f_blocks))));
 }
 
 const char *
