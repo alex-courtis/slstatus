@@ -76,7 +76,7 @@ static const struct arg args[] = {
 #endif
 
 #if defined(HOST_duke)
-	{ wifi_essid,			"%s",		"wlp0s20f3" },
+	{ wifi_perc,			"%s",		"wlp0s20f3" },
 #elif defined(HOST_earl)
 	{ wifi_perc,			"%s",		"wlp192s0" },
 #endif
