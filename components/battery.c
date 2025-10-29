@@ -108,7 +108,11 @@
 			h = timeleft;
 			m = (timeleft - (double)h) * 60;
 
-			return bprintf("%juh %jum", h, m);
+			if (h < 2) {
+				return bprintf("%juh %jum", h, m);
+			} else {
+				return bprintf("%juh", h);
+			}
 		}
 
 		return "";
