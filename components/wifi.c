@@ -242,9 +242,9 @@
 					if (!dBm) {
 						show = !show;
 						return bprintf("│  %s  ", show ? "󱚵" : " ");
-					} else if (dBm > -5) {
+					} else if (dBm >= -60) {
 						return bprintf("");
-					} else if (dBm > -70) {
+					} else if (dBm >= -67) {
 						return bprintf("│ 󰖩 %ddBm ", dBm);
 					} else {
 						show = !show;
